@@ -34,16 +34,18 @@ private:
   QMenuBar *appMenuBar;
   QAction *openAction;
   QAction *quitAction;
+  QAction *searchAction;
+  QAction *searchNameAction;
+  QAction *searchCallAction;
 
   /** file submenu options */
   QAction *editAction;
   QAction *saveAction;
 
-  QAction *searchAction;
 
   /** Toolbar actions */
   QAction *newAction;
-  QAction *deleeteAction;
+  QAction *deleateAction;
   QAction *nextAction;
   QAction *previousAction;
 
@@ -52,7 +54,7 @@ private:
   QPushButton *nextButton;
   QPushButton *previousButton;
 
-  QPushButton *searchButton;
+//  QPushButton *searchButton;
 
   /** Create the main UI actions. */
   void createActions();
@@ -83,6 +85,8 @@ public slots:
   void openClicked();
   void saveClicked();
   void searchClicked();
+  void searchNameClicked();
+  void searchCallClicked();
 
   /** exit this app */
   void quitClicked();

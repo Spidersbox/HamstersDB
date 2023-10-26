@@ -127,9 +127,9 @@ void MainWindow::createMenuBar()
   file->addAction(saveAction);
   file->addAction(quitAction);
 
-//  QMenu *search = appMenuBar->addMenu(tr("&F3"));
-////  QMenu *submenu=settings->addMenu("&Playlist");
-//  search->addAction(searchAction);
+  QMenu *search = appMenuBar->addMenu(tr("&Search"));
+  search->addAction(searchNameAction);
+  search->addAction(searchCallAction);
 
 }
 
@@ -165,8 +165,7 @@ void MainWindow::createToolBars()
 
   horizontalGroupBox->setLayout(navLayout);
   horizontalGroupBox->setContentsMargins(0,0,0,0);
-
-  ui->statusBar->addWidget(horizontalGroupBox);
+  ui->verticalLayout->addWidget(horizontalGroupBox,0, Qt::AlignCenter);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -178,14 +177,21 @@ void MainWindow::createActions()
   openAction->setToolTip(tr("Open a database file"));
   saveAction = new QAction(QIcon(":/images/bt_save"), tr("&Save database to a file"), this);
   saveAction->setToolTip(tr("save the database"));
+
   quitAction = new QAction(QIcon(":/images/bt_close"), tr("E&xit"), this);
   quitAction->setToolTip(tr("Quit application"));
 
+  searchNameAction = new QAction(QIcon(":/images/bt_search"), tr("by Name"), this);
+  searchNameAction->setToolTip(tr("search by name"));
+  searchCallAction = new QAction(QIcon(":/images/bt_search"), tr("by Call"), this);
+  searchCallAction->setToolTip(tr("search by callsign"));
 
   // main menu signals
   connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
   connect(saveAction, SIGNAL(triggered()), this, SLOT(saveClicked()));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(quitClicked()));
+  connect(searchNameAction, SIGNAL(triggered()), this, SLOT(searchNameClicked()));
+  connect(searchCallAction, SIGNAL(triggered()), this, SLOT(searchCallClicked()));
 
   // table nav toolbar signals
   connect(newButton, SIGNAL(clicked()), this, SLOT(newClicked()));
@@ -253,6 +259,20 @@ void MainWindow::saveClicked()
 void MainWindow::searchClicked()
 {
   QMessageBox::warning(this,"warning","search was clicked");
+}
+
+//-----------------------------------------------------------------------------------------
+// menu-search-Name
+void MainWindow::searchNameClicked()
+{
+  QMessageBox::warning(this,"warning","search-Name was clicked");
+}
+
+//-----------------------------------------------------------------------------------------
+// menu-search-Call
+void MainWindow::searchCallClicked()
+{
+  QMessageBox::warning(this,"warning","search-Call was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
