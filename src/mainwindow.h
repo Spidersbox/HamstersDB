@@ -22,6 +22,9 @@ public:
   void closeEvent(QCloseEvent *close_trigger);
   ~MainWindow();
 
+
+
+
 //    bool saveToDisk(const QString &filename, QNetworkReply* reply);
 
 private:
@@ -61,22 +64,10 @@ private:
 //    void download(const QUrl &downTo,QNetworkReply *reply);
 
 private slots:
-  /** Show open file dialog */
-  void openClicked();
-  void saveClicked();
-  void searchClicked();
-
-  /** exit this app */
-  void quitClicked();
 
   void on_lineEdit_textEdited(const QString &arg1);
   void initializeTable();
 
-  void newClicked();
-  void deleteClicked();
-//  void stopClicked();
-  void nextClicked();
-  void previousClicked();
 
 //    void start();
 //    void getlist();
@@ -87,6 +78,21 @@ private slots:
 //    void networkTimeout();
 //    static bool isHttpRedirect(QNetworkReply *reply);
 
+public slots:
+  /** Show open file dialog */
+  void openClicked();
+  void saveClicked();
+  void searchClicked();
+
+  /** exit this app */
+  void quitClicked();
+void shutdownClicked();
+
+  void newClicked();
+  void deleteClicked();
+//  void stopClicked();
+  void nextClicked();
+  void previousClicked();
 
 };
 #endif

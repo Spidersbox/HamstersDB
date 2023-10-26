@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
 //--------------------------------------------------------------------------------------
 void MainWindow::closeEvent(QCloseEvent *close_trigger)
 {
-  quitClicked();
+  shutdownClicked();
 }
 
 //--------------------------------------------------------------------------------------
@@ -181,21 +181,17 @@ void MainWindow::createActions()
   quitAction = new QAction(QIcon(":/images/bt_close"), tr("E&xit"), this);
   quitAction->setToolTip(tr("Quit application"));
 
-//  searchAction = new QAction(QIcon(":/images/bt_search"), tr("&F3"), this);
-//  searchAction->setToolTip(tr("search using name or callsign"));
-
 
   // main menu signals
   connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
   connect(saveAction, SIGNAL(triggered()), this, SLOT(saveClicked()));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(quitClicked()));
-//  connect(searchAction, SIGNAL(triggered()), this, SLOT(searchClicked()));
 
   // table nav toolbar signals
-  connect(newButton, &QAbstractButton::clicked, this, &MainWindow::newClicked);
-  connect(deleteButton, &QAbstractButton::clicked, this, &MainWindow::deleteClicked);
-  connect(nextButton, &QAbstractButton::clicked, this, &MainWindow::nextClicked);
-  connect(previousButton, &QAbstractButton::clicked, this, &MainWindow::previousClicked);
+  connect(newButton, SIGNAL(clicked()), this, SLOT(newClicked()));
+  connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+  connect(nextButton, SIGNAL(clicked()), this, SLOT(nextClicked()));
+  connect(previousButton, SIGNAL(clicked()), this, SLOT(previousClicked()));
 
 }
 
@@ -242,35 +238,41 @@ void MainWindow::openClicked()
 // menu-new
 void MainWindow::newClicked()
 {
+  QMessageBox::warning(this,"warning","New was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
 // menu-save
 void MainWindow::saveClicked()
 {
+  QMessageBox::warning(this,"warning","save was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
 // menu-search
 void MainWindow::searchClicked()
 {
+  QMessageBox::warning(this,"warning","search was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
 /** delete button */
 void MainWindow::deleteClicked()
 {
+  QMessageBox::warning(this,"warning","delete was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
 /** next button */
 void MainWindow::nextClicked()
 {
+  QMessageBox::warning(this,"warning","Next was clicked");
 }
 
 //-----------------------------------------------------------------------------------------
 void MainWindow::previousClicked()
 {/** previous button */
+  QMessageBox::warning(this,"warning","previous was clicked");
 //  player->stop();
 //  player->play();
 }
@@ -279,10 +281,17 @@ void MainWindow::previousClicked()
 /** exit this app */
 void MainWindow::quitClicked()
 {
-  QMessageBox::warning(this,"quit was clicked","warning");
+  QMessageBox::warning(this,"warning","quit was clicked");
   qApp->quit();
 }
 
+//-----------------------------------------------------------------------------------------
+/** exit this app */
+void MainWindow::shutdownClicked()
+{
+  QMessageBox::warning(this,"warning","App shut down detected");
+  qApp->quit();
+}
 
 
 //--------------------------------------------------------------------------------------
