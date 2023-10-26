@@ -19,6 +19,7 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow(QWidget *parent = 0);
+  void closeEvent(QCloseEvent *close_trigger);
   ~MainWindow();
 
 //    bool saveToDisk(const QString &filename, QNetworkReply* reply);

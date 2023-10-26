@@ -26,9 +26,8 @@ HEADERS  += src/mainwindow.h \
 
 FORMS    += src/forms/mainwindow.ui
 
-RC_FILE = src/hamstersdb.rc
-
 RESOURCES += src/hamstersdb.qrc
+windows:RC_FILE = src/hamstersdb.rc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

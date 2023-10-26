@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
   resize(800, 450);
   setWindowTitle(tr("Hamsters DB"));
 
-  QIcon icon(":/icon/favicon"); 
+  QIcon icon(":/images/favicon"); 
   setWindowIcon(icon);
 
   /** center form on screen */
@@ -50,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
 #endif
    
 #ifndef Q_OS_MAC
-    qApp->setWindowIcon(QIcon(":icons/favicon"));
-    setWindowIcon(QIcon(":icons/favicon"));
+    qApp->setWindowIcon(QIcon(":/images/favicon"));
+    setWindowIcon(QIcon(":/images/favicon"));
 #else
     setUnifiedTitleAndToolBarOnMac(true);
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
@@ -90,6 +90,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+//--------------------------------------------------------------------------------------
+void MainWindow::closeEvent(QCloseEvent *close_trigger)
+{
+  quitClicked();
+}
+
+//--------------------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
     delete ui;
