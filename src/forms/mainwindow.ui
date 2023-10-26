@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>927</width>
-    <height>489</height>
+    <width>937</width>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -240,28 +240,17 @@
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Grid</string>
+        <string>Table</string>
        </attribute>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="geometry">
-         <rect>
-          <x>-1</x>
-          <y>1</y>
-          <width>921</width>
-          <height>421</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QTableView" name="tableView">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>20</y>
-          <width>256</width>
-          <height>192</height>
-         </rect>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="tableLayout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinAndMaxSize</enum>
+          </property>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -280,7 +269,6 @@
   <tabstop>lineEdit_5</tabstop>
   <tabstop>lineEdit_3</tabstop>
   <tabstop>lineEdit_6</tabstop>
-  <tabstop>tableWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

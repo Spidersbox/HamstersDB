@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QGroupBox>
+#include <QTableWidget>
 
 #include "ui_mainwindow.h"
 
@@ -30,6 +31,8 @@ public:
 private:
   Ui::MainWindow *ui;
   QGroupBox *horizontalGroupBox;
+//  QTableWidget *DBTable;
+  QTableView *DBTable;
 
   QMenuBar *appMenuBar;
   QAction *openAction;
@@ -62,6 +65,8 @@ private:
   void createMenuBar();
   /** Create the toolbars */
   void createToolBars();
+
+  void createView();
 
 //    void download(const QUrl &downTo,QNetworkReply *reply);
 

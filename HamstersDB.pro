@@ -19,10 +19,10 @@ UI_DIR = build
 
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
-    src/dbmanager.cpp \
+    src/dbman.cpp \
 
 HEADERS  += src/mainwindow.h \
-    src/dbmanager.h
+    src/dbman.h
 
 FORMS    += src/forms/mainwindow.ui
 

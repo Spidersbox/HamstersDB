@@ -20,8 +20,8 @@
 #include <QMessageBox> // for debuging
 #include <QDebug>
 
-#include "connection.h"
 #include "mainwindow.h"
+#include "dbman.h"
 #include "ui_mainwindow.h"
 
 
@@ -68,9 +68,14 @@ MainWindow::MainWindow(QWidget *parent)
   /** menubar on form instead */
   menuBar()->setNativeMenuBar(false);
 
+  createView();
+  ui->tableLayout->setMargin(0); ///m
+//  ui->tableLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//  ui->tableLayout->setSizeConstraint(QLayout::SetNoConstraint);
+  ui->tableLayout->addWidget(DBTable);
 
 
-
+int ret=dbman::initDB();
 
 /*
   if (!createConnection())
@@ -236,7 +241,7 @@ void MainWindow::openClicked()
   else
   {
     QString mess="Could not open file: "+filename;
-    QMessageBox::warning(this,"Random Player",mess);
+    QMessageBox::warning(this,"HamstersDB",mess);
   }
 }
 
@@ -336,11 +341,28 @@ void MainWindow::initializeTable()
 }
 
 //--------------------------------------------------------------------------------------
-QTableView *createView(QSqlTableModel *model, const QString &title = "")
+void MainWindow::createView()
 {
 //    QTableView *view = new QTableView;
 //  ui->tableView->setModel(model);
 //  ui->tableView->setWindowTitle(title);
 //    return view;
+
+//  DBTable = new QTableWidget(0, 3);
+  DBTable = new QTableView;
+  DBTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  QStringList labels;
+  labels << tr("Filename") << tr("Description") << tr("Version");
+//  DBTable->setHorizontalHeaderLabels(labels);
+
+  DBTable->setColumnWidth(0,160);// last column get resized automatically by qt
+  DBTable->setColumnWidth(2,100);
+  DBTable->setColumnWidth(1,250);
+  DBTable->verticalHeader()->hide();
+  DBTable->setShowGrid(false);
+
+//  connect(DBTable, SIGNAL(cellActivated(int,int)), this, SLOT(openFileOfItem(int,int)));
+
 }
 
