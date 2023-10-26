@@ -1,0 +1,23 @@
+<RCC>
+  <qresource prefix="/images">
+    <file alias="bt_new">images/new.png</file>
+    <file alias="bt_new_hover">images/new-hover.png</file>
+
+    <file alias="bt_delete">images/delete.png</file>
+    <file alias="bt_delete_hover">images/delete-hover.png</file>
+
+    <file alias="bt_next">images/next.png</file>
+    <file alias="bt_next_hover">images/next-hover.png</file>
+
+    <file alias="bt_previous">images/previous.png</file>
+    <file alias="bt_previous_hover">images/previous-hover.png</file>
+
+    <file alias="bt_open">images/open.png</file>
+    <file alias="bt_close">images/delete.png</file>
+    <file alias="bt_save">images/save.png</file>
+  </qresource>
+
+  <qresource prefix="/icons">
+    <file alias="favicon">images/favicon.ico</file>
+  </qresource>
+</RCC>
