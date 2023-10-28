@@ -169,7 +169,6 @@ void MainWindow::createToolBars()
   navLayout->setContentsMargins(0,0,0,0);
 
   horizontalGroupBox->setLayout(navLayout);
-  horizontalGroupBox->setContentsMargins(0,0,0,0);
   ui->verticalLayout->addWidget(horizontalGroupBox,0, Qt::AlignCenter);
 }
 
@@ -188,9 +187,9 @@ void MainWindow::createActions()
   quitAction = new QAction(QIcon(":/images/bt_close"), tr("E&xit"), this);
   quitAction->setToolTip(tr("Quit application"));
 
-  searchNameAction = new QAction(QIcon(":/images/bt_search"), tr("by Name"), this);
+  searchNameAction = new QAction(QIcon(":/images/bt_search_name"), tr("by Name"), this);
   searchNameAction->setToolTip(tr("search by name"));
-  searchCallAction = new QAction(QIcon(":/images/bt_search"), tr("by Call"), this);
+  searchCallAction = new QAction(QIcon(":/images/bt_search_call"), tr("by Call"), this);
   searchCallAction->setToolTip(tr("search by callsign"));
 
   // main menu signals
@@ -253,7 +252,11 @@ void MainWindow::openClicked()
 void MainWindow::createClicked()
 {
   QMessageBox::warning(this,"warning","Create was clicked");
-int ret=dbman::initDB("HAMS");
+  int ret=dbman::initDB("HAMS.sql");
+  if(!ret)
+  {
+    qFatal( "Failed to connect." );
+  }
 }
 
 //-----------------------------------------------------------------------------------------

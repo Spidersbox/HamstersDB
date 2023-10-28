@@ -12,9 +12,12 @@
     <file alias="bt_previous">images/previous.png</file>
     <file alias="bt_previous_hover">images/previous-hover.png</file>
 
-    <file alias="bt_open">images/open.png</file>
+    <file alias="bt_open">images/opened.png</file>
+    <file alias="bt_create">images/create.png</file>
     <file alias="bt_close">images/delete.png</file>
     <file alias="bt_save">images/save.png</file>
+    <file alias="bt_search_call">images/search-call64.png</file>
+    <file alias="bt_search_name">images/search-name48.png</file>
 
     <file alias="favicon">images/favicon.ico</file>
     <file alias="antenna">images/ant-icon1.png</file>
