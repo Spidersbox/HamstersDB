@@ -7,8 +7,8 @@ class dbman
 public:
 //  static bool ok;
 
-  static int initDB();
-
+//  static int initDB();
+  static int initDB(QString dbName);
 
 };
 

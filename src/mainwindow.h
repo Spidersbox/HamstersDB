@@ -31,11 +31,12 @@ public:
 private:
   Ui::MainWindow *ui;
   QGroupBox *horizontalGroupBox;
-//  QTableWidget *DBTable;
-  QTableView *DBTable;
+  QTableWidget *DBTable;
+//  QTableView *DBTable;
 
   QMenuBar *appMenuBar;
   QAction *openAction;
+  QAction *createAction;
   QAction *quitAction;
   QAction *searchAction;
   QAction *searchNameAction;
@@ -88,6 +89,7 @@ private slots:
 public slots:
   /** Show open file dialog */
   void openClicked();
+  void createClicked();
   void saveClicked();
   void searchClicked();
   void searchNameClicked();

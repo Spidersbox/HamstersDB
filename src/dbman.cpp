@@ -4,17 +4,18 @@
 #include <QtSql>
 #include "dbman.h"
 
-QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+//QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
-int dbman::initDB()
+int dbman::initDB(QString dbName)
 {
   bool ok=0;
   // Initialize the database:
   //  QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
   db.setHostName("localhost");
-  db.setDatabaseName("CHAT");
-  db.setUserName("chat");
-  db.setPassword("chat1");
+  db.setDatabaseName(dbName);
+  db.setUserName("ham");
+  db.setPassword("ham1");
   ok=db.open();
   if(!ok)
   {

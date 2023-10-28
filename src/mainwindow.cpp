@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  resize(800, 450);
+  resize(840, 450);
   setWindowTitle(tr("Hamsters DB"));
 
   QIcon icon(":/images/favicon"); 
@@ -75,7 +75,6 @@ MainWindow::MainWindow(QWidget *parent)
   ui->tableLayout->addWidget(DBTable);
 
 
-int ret=dbman::initDB();
 
 /*
   if (!createConnection())
@@ -129,6 +128,7 @@ void MainWindow::createMenuBar()
   // Configure the menus
   QMenu *file = appMenuBar->addMenu(tr("&File"));
   file->addAction(openAction);
+  file->addAction(createAction);
   file->addAction(saveAction);
   file->addAction(quitAction);
 
@@ -180,6 +180,8 @@ void MainWindow::createActions()
   // main menu actions
   openAction = new QAction(QIcon(":/images/bt_open"), tr("&Open database file"), this);
   openAction->setToolTip(tr("Open a database file"));
+  createAction = new QAction(QIcon(":/images/bt_create"), tr("&Create new database file"), this);
+  createAction->setToolTip(tr("Create a new database file"));
   saveAction = new QAction(QIcon(":/images/bt_save"), tr("&Save database to a file"), this);
   saveAction->setToolTip(tr("save the database"));
 
@@ -193,6 +195,7 @@ void MainWindow::createActions()
 
   // main menu signals
   connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
+  connect(createAction, SIGNAL(triggered()), this, SLOT(createClicked()));
   connect(saveAction, SIGNAL(triggered()), this, SLOT(saveClicked()));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(quitClicked()));
   connect(searchNameAction, SIGNAL(triggered()), this, SLOT(searchNameClicked()));
@@ -243,6 +246,14 @@ void MainWindow::openClicked()
     QString mess="Could not open file: "+filename;
     QMessageBox::warning(this,"HamstersDB",mess);
   }
+}
+
+//-----------------------------------------------------------------------------------------
+// menu-create new db
+void MainWindow::createClicked()
+{
+  QMessageBox::warning(this,"warning","Create was clicked");
+int ret=dbman::initDB("HAMS");
 }
 
 //-----------------------------------------------------------------------------------------
@@ -348,17 +359,18 @@ void MainWindow::createView()
 //  ui->tableView->setWindowTitle(title);
 //    return view;
 
-//  DBTable = new QTableWidget(0, 3);
-  DBTable = new QTableView;
+  DBTable = new QTableWidget(0, 6);
+//  DBTable = new QTableView;
   DBTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
   QStringList labels;
-  labels << tr("Filename") << tr("Description") << tr("Version");
-//  DBTable->setHorizontalHeaderLabels(labels);
-
-  DBTable->setColumnWidth(0,160);// last column get resized automatically by qt
-  DBTable->setColumnWidth(2,100);
-  DBTable->setColumnWidth(1,250);
+  labels << tr("Call Sign") << tr("Name") << tr("CH/freq") << tr("City") << tr("County") << tr("Remarks");
+  DBTable->setHorizontalHeaderLabels(labels);
+  DBTable->setColumnWidth(0,120);// last column get resized automatically by qt
+  DBTable->setColumnWidth(1,120);
+  DBTable->setColumnWidth(2,120);
+  DBTable->setColumnWidth(3,120);
+  DBTable->setColumnWidth(4,120);
+  DBTable->setColumnWidth(5,550);
   DBTable->verticalHeader()->hide();
   DBTable->setShowGrid(false);
 
