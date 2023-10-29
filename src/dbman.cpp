@@ -1,55 +1,68 @@
 #include <QtCore/QCoreApplication>
+#include <QFileInfo>
 #include <QSqlDatabase>
 #include <QSqlError>  // db.lastError error reporting
 #include <QtSql>
+#include <QMessageBox> // for debuging
+#include <QDebug>
 #include "dbman.h"
 
 //QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
-int dbman::initDB(QString dbName)
+
+
+//-----------------------------------------------------------------------------------------
+QSqlError initDB(QString dbName)
 {
-  bool ok=0;
-  // Initialize the database:
-  //  QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-  db.setHostName("localhost");
-  db.setDatabaseName(dbName);
-  db.setUserName("ham");
-  db.setPassword("ham1");
-  ok=db.open();
-  if(!ok)
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(dbName);
+
+    if (!db.open())
+        return db.lastError();
+
+    QStringList tables = db.tables();
+    if (tables.contains("hams", Qt::CaseInsensitive))
+        return QSqlError();
+
+    QSqlQuery rec;
+    if (!rec.exec(HAMS_SQL))
+        return rec.lastError();
+
+
+    if (!rec.prepare(INSERT_HAMS_SQL))
+        return rec.lastError();
+
+    addRec(rec, "KKLKQ","145.19","Walt","Republic","Ferry"," it's me :)");
+    addRec(rec, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","");
+//    addBook(q, QLatin1String("Going Postal"), 2004, pratchettId, fantasy, 3);
+
+    return QSqlError();
+}
+
+//-----------------------------------------------------------------------------------------
+void update(int recno)
+{
+  bool ok=db.open();
+  if(ok)  // is db open?
   {
-    qDebug() << db.lastError();
-    qFatal( "Failed to connect." );
-    return ok;
+    qDebug() << "dbman::update: database is open, rec # is "<<QString(recno);
   }
-  qDebug() << "Database is connected.";
-  QSqlQuery qry;
-
-  qry.prepare("SET SESSION wait_timeout = 345600");
-  if(!qry.exec())
-    qDebug() << qry.lastError();
-
-  qry.prepare("SET SESSION interactive_timeout = 345600");
-  if(!qry.exec())
-    qDebug() << qry.lastError();
-
-  qry.prepare( "SHOW VARIABLES LIKE '%timeout%'");
-  if(!qry.exec())
-    qDebug() << qry.lastError();
   else
   {
-    QString user, message;
-    QSqlRecord data = qry.record();
-    for( int r=0; qry.next(); r++ )
-    {
-      user=qry.value(0).toString();
-      message=qry.value(1).toString();
-qDebug() <<user << ":" << message;
-db.close();
-//    client->write(QString("Server: "+ user + ":" + message + "\n").toUtf8());
-    }
-//    qDebug() << data;
+    qDebug() << "dbAdd: database is not open";
   }
-  return ok;
 }
+
+void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
+            const QString &city,const QString &county,const QString &remarks)
+{
+  rec.addBindValue(call);
+  rec.addBindValue(freq);
+  rec.addBindValue(name);
+  rec.addBindValue(city);
+  rec.addBindValue(county);
+  rec.addBindValue(remarks);
+  rec.exec();
+}
+

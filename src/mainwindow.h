@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QGroupBox>
 #include <QTableWidget>
+#include <QtSql>
 
 #include "ui_mainwindow.h"
 
@@ -68,6 +69,7 @@ private:
   void createToolBars();
 
   void createView();
+  void showError(const QSqlError &err);
 
 //    void download(const QUrl &downTo,QNetworkReply *reply);
 

@@ -6,8 +6,10 @@
 #include <QTableView>
 #include <QFileDialog>
 #include <QFile>
+#include <QFileInfo>
 
 #include <stdlib.h>
+#include <QtSql>
 
 //#include <QtGui/QApplication>  //qt4
 #include <QApplication>  //qt5
@@ -97,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
 //--------------------------------------------------------------------------------------
 void MainWindow::closeEvent(QCloseEvent *close_trigger)
 {
+  close_trigger=close_trigger; //make unused param warning go away
   shutdownClicked();
 }
 
@@ -214,31 +217,15 @@ void MainWindow::createActions()
 void MainWindow::openClicked()
 {
   QString filename=QFileDialog::getOpenFileName(
-              this,
-              "Open database",
-              "/",
+              this,"Open database",qApp->applicationDirPath(),
               "SQL DB files (*.sql)");
 
   QFile file(filename);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-/*
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    playlist.clear();
-    ui->listWidget->clear();
-    ui->listWidget2->clear();
-    QTextStream textStream(&file);
-    while (!textStream.atEnd())
-    {
-      QString line=textStream.readLine();
-      playlist<<line;
-      ui->listWidget->addItem(line);
-    }
-*/
+    QMessageBox::warning(this,"HamstersDB","opened file "+filename);
+
     file.close();
-    QApplication::restoreOverrideCursor();
-//    stopClicked();
-//    loadPlayer();
   }
   else
   {
@@ -251,14 +238,45 @@ void MainWindow::openClicked()
 // menu-create new db
 void MainWindow::createClicked()
 {
-  QMessageBox::warning(this,"warning","Create was clicked");
-  int ret=dbman::initDB("HAMS.sql");
-  if(!ret)
+  QString default_path=qApp->applicationDirPath()+"/HAMS.sql";
+  // check to see if default db exists
+  if(!QFileInfo::exists(default_path))
   {
-    qFatal( "Failed to connect." );
+    // default db does not exist - create it
+    QSqlError err = initDB(default_path);
+    if (err.type() != QSqlError::NoError)
+    {
+      showError(err);
+      return;
+    }
+  }
+  else
+  {
+    QString filename=QFileDialog::getSaveFileName(
+              this,"Create database",qApp->applicationDirPath(),
+              "SQL DB files (*.sql)");
+
+    QFileInfo Finfo(filename);
+    QString ext = Finfo.suffix();
+    if(ext !="sql")
+      filename+=".sql";
+
+//    QMessageBox::warning(this,"HamstersDB","create db "+filename);
+    // check if file exists
+    if(!QFileInfo::exists(filename))
+    {
+      // default db does not exist - create it
+      QSqlError err = initDB(filename);
+      if (err.type() != QSqlError::NoError)
+      {
+        showError(err);
+        return;
+      }
+      // done.
+    }
+
   }
 }
-
 //-----------------------------------------------------------------------------------------
 // menu-new
 void MainWindow::newClicked()
@@ -379,5 +397,12 @@ void MainWindow::createView()
 
 //  connect(DBTable, SIGNAL(cellActivated(int,int)), this, SLOT(openFileOfItem(int,int)));
 
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::showError(const QSqlError &err)
+{
+    QMessageBox::critical(this, "Unable to initialize Database",
+                "Error initializing database: " + err.text());
 }
 
