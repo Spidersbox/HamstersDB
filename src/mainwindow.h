@@ -6,6 +6,7 @@
 #include <QGroupBox>
 #include <QTableWidget>
 #include <QtSql>
+#include <QDataWidgetMapper>
 
 #include "ui_mainwindow.h"
 
@@ -30,7 +31,10 @@ private:
   QSqlRelationalTableModel *model = nullptr;
   int CallIdx = 0;
   int NameIdx = 0;
+  QDataWidgetMapper *mapper;
+
   QMenuBar *appMenuBar;
+
   QAction *openAction;
   QAction *createAction;
   QAction *quitAction;
@@ -65,12 +69,12 @@ private:
   /** Create the toolbars */
   void createToolBars();
 
-  void createView(QString DBname);
+  void createView();
   void showError(const QSqlError &err);
 
 private slots:
 
-  void on_lineEdit_textEdited(const QString &arg1);
+  void on_CallEdit_textEdited(const QString &arg1);
   void initializeTable();
 
 
@@ -89,8 +93,9 @@ public slots:
 
   void newClicked();
   void deleteClicked();
-  void nextClicked();
-  void previousClicked();
+//  void nextClicked();
+//  void previousClicked();
+  void updateButtons();
 
 };
 #endif

@@ -54,6 +54,12 @@ void open(QString DBname)
 }
 
 //-----------------------------------------------------------------------------------------
+void closeDB()
+{
+if (db.isOpen())
+    db.close();
+}
+//-----------------------------------------------------------------------------------------
 void update(int recno)
 {
   bool ok=db.open();
@@ -67,6 +73,7 @@ void update(int recno)
   }
 }
 
+//-----------------------------------------------------------------------------------------
 void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
             const QString &city,const QString &county,const QString &remarks)
 {

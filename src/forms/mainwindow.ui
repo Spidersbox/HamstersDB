@@ -43,7 +43,7 @@
          <string>Remarks</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_5">
+       <widget class="QLineEdit" name="CountyEdit">
         <property name="geometry">
          <rect>
           <x>540</x>
@@ -78,7 +78,7 @@
          <string>County</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_4">
+       <widget class="QLineEdit" name="CityEdit">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -113,7 +113,7 @@
          <string>        City</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_2">
+       <widget class="QLineEdit" name="NameEdit">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -167,7 +167,7 @@
          <string>Call Sign</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="CallEdit">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -205,7 +205,7 @@
          <string>CH/Freq</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_3">
+       <widget class="QLineEdit" name="FreqEdit">
         <property name="geometry">
          <rect>
           <x>540</x>
@@ -224,7 +224,7 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_6">
+       <widget class="QLineEdit" name="RemarksEdit">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -244,16 +244,12 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="tableLayout">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinAndMaxSize</enum>
+         <widget class="QTableView" name="DBTable">
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
           </property>
-         </layout>
-<widget class="QTableView" name="DBTable">
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-        </widget>        </item>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -267,12 +263,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>lineEdit_2</tabstop>
-  <tabstop>lineEdit_4</tabstop>
-  <tabstop>lineEdit_5</tabstop>
-  <tabstop>lineEdit_3</tabstop>
-  <tabstop>lineEdit_6</tabstop>
+  <tabstop>CallEdit</tabstop>
+  <tabstop>NameEdit</tabstop>
+  <tabstop>CityEdit</tabstop>
+  <tabstop>CountyEdit</tabstop>
+  <tabstop>FreqEdit</tabstop>
+  <tabstop>RemarksEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

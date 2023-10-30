@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <QtSql>
+#include <QDataWidgetMapper>
 
 //#include <QtGui/QApplication>  //qt4
 #include <QApplication>  //qt5
@@ -83,13 +84,13 @@ void MainWindow::closeEvent(QCloseEvent *close_trigger)
 //--------------------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
-    delete ui;
+  delete ui;
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_lineEdit_textEdited(const QString &arg1)
+void MainWindow::on_CallEdit_textEdited(const QString &arg1)
 {
-  ui->lineEdit->setText(arg1.toUpper());
+  ui->CallEdit->setText(arg1.toUpper());
 }
 
 //-----------------------------------------------------------------------------------------
@@ -121,21 +122,24 @@ void MainWindow::createMenuBar()
 //-----------------------------------------------------------------------------------------
 void MainWindow::createToolBars()
 {
-
   newButton = new QPushButton(this);
-  newButton->setStyleSheet("*{border-image:url(:/images/bt_new); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_new_hover);}");
+  newButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_new); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_new_hover);}");
+  newButton->setToolTip(tr("Add a new blank record"));
   newButton->setEnabled(true);
 
   deleteButton = new QPushButton(this);
-  deleteButton->setStyleSheet("*{border-image:url(:/images/bt_delete); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_delete_hover);}");
+  deleteButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_delete); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_delete_hover);}");
+  deleteButton->setToolTip(tr("Delete this record"));
   deleteButton->setEnabled(true);
 
   nextButton = new QPushButton(this);
-  nextButton->setStyleSheet("*{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}");
+  nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}");
+  nextButton->setToolTip(tr("go to next record"));
   nextButton->setEnabled(true);
 
   previousButton = new QPushButton(this);
-  previousButton->setStyleSheet("*{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}");
+  previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}");
+  previousButton->setToolTip(tr("go to previous record"));
   previousButton->setEnabled(true);
 
 
@@ -144,8 +148,8 @@ void MainWindow::createToolBars()
 
   navLayout->addWidget(newButton);
   navLayout->addWidget(deleteButton);
-  navLayout->addWidget(nextButton);
   navLayout->addWidget(previousButton);
+  navLayout->addWidget(nextButton);
   navLayout->setContentsMargins(0,0,0,0);
 
   horizontalGroupBox->setLayout(navLayout);
@@ -183,8 +187,8 @@ void MainWindow::createActions()
   // table nav toolbar signals
   connect(newButton, SIGNAL(clicked()), this, SLOT(newClicked()));
   connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-  connect(nextButton, SIGNAL(clicked()), this, SLOT(nextClicked()));
-  connect(previousButton, SIGNAL(clicked()), this, SLOT(previousClicked()));
+//  connect(nextButton, SIGNAL(clicked()), this, SLOT(nextClicked()));
+//  connect(previousButton, SIGNAL(clicked()), this, SLOT(previousClicked()));
 
 }
 
@@ -196,10 +200,10 @@ void MainWindow::openClicked()
   QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
                                                 "SQL DB files (*.sql)");
 
-  QMessageBox::warning(this,"HamstersDB","db name "+filename);
+//  QMessageBox::warning(this,"HamstersDB","db name "+filename);
   open(filename);
 
-  createView("hams");
+  createView();
 }
 
 //-----------------------------------------------------------------------------------------
@@ -207,6 +211,7 @@ void MainWindow::openClicked()
 void MainWindow::createClicked()
 {
   QString default_path=qApp->applicationDirPath()+"/HAMS.sql";
+
   // check to see if default db exists
   if(!QFileInfo::exists(default_path))
   {
@@ -217,7 +222,7 @@ void MainWindow::createClicked()
       showError(err);
       return;
     }
-    createView("hams");
+    createView();
   }
   else
   {
@@ -241,7 +246,7 @@ void MainWindow::createClicked()
         showError(err);
         return;
       }
-      createView("hams");
+      createView();
     }
   }
 }
@@ -257,6 +262,9 @@ void MainWindow::newClicked()
 void MainWindow::saveClicked()
 {
   QMessageBox::warning(this,"warning","save was clicked");
+
+// mapper->submit();
+// mapper->setCurrentIndex(itemId);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -288,25 +296,18 @@ void MainWindow::deleteClicked()
 }
 
 //-----------------------------------------------------------------------------------------
-/** next button */
-void MainWindow::nextClicked()
+/** previous button */
+void MainWindow::updateButtons()
 {
-  QMessageBox::warning(this,"warning","Next was clicked");
-}
-
-//-----------------------------------------------------------------------------------------
-void MainWindow::previousClicked()
-{/** previous button */
-  QMessageBox::warning(this,"warning","previous was clicked");
-//  player->stop();
-//  player->play();
+  QMessageBox::warning(this,"warning","update buttons was called");
 }
 
 //-----------------------------------------------------------------------------------------
 /** exit this app */
 void MainWindow::quitClicked()
 {
-  QMessageBox::warning(this,"warning","quit was clicked");
+//  QMessageBox::warning(this,"warning","quit was clicked");
+  closeDB();
   qApp->quit();
 }
 
@@ -314,7 +315,8 @@ void MainWindow::quitClicked()
 /** exit this app */
 void MainWindow::shutdownClicked()
 {
-  QMessageBox::warning(this,"warning","App shut down detected");
+//  QMessageBox::warning(this,"warning","App shut down detected");
+  closeDB();
   qApp->quit();
 }
 
@@ -322,53 +324,14 @@ void MainWindow::shutdownClicked()
 //--------------------------------------------------------------------------------------
 void MainWindow::initializeTable()
 {
-//  ui->tableView->setTable("person");
-//    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-//    model->select();
-
-//    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-//    model->setHeaderData(1, Qt::Horizontal, QObject::tr("First name"));
-//    model->setHeaderData(2, Qt::Horizontal, QObject::tr("Last name"));
-
-//  ui->setTable("person");
-
-//  MainWindow->setEditStrategy(QSqlTableModel::OnManualSubmit);
-//  MainWindow->select();
-
-//  MainWindow->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-//  MainWindow->setHeaderData(1, Qt::Horizontal, QObject::tr("First name"));
-//  MainWindow->setHeaderData(2, Qt::Horizontal, QObject::tr("Last name"));
+  QMessageBox::warning(this,"warning","initializeTable() called");
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::createView(QString DBname)
+void MainWindow::createView()
 {
-/*
-//    QTableView *view = new QTableView;
-//  ui->tableView->setModel(model);
-//  ui->tableView->setWindowTitle(title);
-//    return view;
-
-  DBTable = new QTableWidget(0, 6);
-//  DBTable = new QTableView;
-  DBTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-  QStringList labels;
-  labels << tr("Call Sign") << tr("Name") << tr("CH/freq") << tr("City") << tr("County") << tr("Remarks");
-  DBTable->setHorizontalHeaderLabels(labels);
-  DBTable->setColumnWidth(0,120);// last column get resized automatically by qt
-  DBTable->setColumnWidth(1,120);
-  DBTable->setColumnWidth(2,120);
-  DBTable->setColumnWidth(3,120);
-  DBTable->setColumnWidth(4,120);
-  DBTable->setColumnWidth(5,550);
-  DBTable->verticalHeader()->hide();
-  DBTable->setShowGrid(false);
-
-//  connect(DBTable, SIGNAL(cellActivated(int,int)), this, SLOT(openFileOfItem(int,int)));
-*/
   model = new QSqlRelationalTableModel(ui->DBTable);
   model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-//  model->setTable(DBname+".hams");
   model->setTable("hams");
 
   // Remember the indexes of the columns:
@@ -382,6 +345,7 @@ void MainWindow::createView(QString DBname)
   model->setHeaderData(model->fieldIndex("County"),Qt::Horizontal, tr("County"));
   model->setHeaderData(model->fieldIndex("Remarks"),Qt::Horizontal, tr("Remarks"));
 
+
 // Populate the model:
   if (!model->select())
   {
@@ -389,6 +353,35 @@ void MainWindow::createView(QString DBname)
     return;
   }
   ui->DBTable->setModel(model);
+
+  mapper = new QDataWidgetMapper(this);
+  mapper->setModel(model);
+  mapper->setItemDelegate(new QSqlRelationalDelegate(this));
+  mapper->addMapping(ui->CallEdit, model->fieldIndex("Call"));
+  mapper->addMapping(ui->FreqEdit, model->fieldIndex("Freq"));
+  mapper->addMapping(ui->NameEdit, model->fieldIndex("Name"));
+  mapper->addMapping(ui->CityEdit, model->fieldIndex("City"));
+  mapper->addMapping(ui->CountyEdit, model->fieldIndex("County"));
+  mapper->addMapping(ui->RemarksEdit, model->fieldIndex("Remarks"));
+
+  connect(previousButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toPrevious);
+  connect(nextButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toNext);
+  connect(mapper, &QDataWidgetMapper::currentIndexChanged, this,&MainWindow::updateButtons);
+
+//  mapper->addMapping(typeComboBox, typeIndex);
+
+  connect(ui->DBTable->selectionModel(),&QItemSelectionModel::currentRowChanged,
+            mapper,&QDataWidgetMapper::setCurrentModelIndex);
+  ui->DBTable->setCurrentIndex(model->index(0, 0));
+  ui->DBTable->selectRow(0);
+
+  ui->DBTable->setColumnWidth(0,0);//id
+  ui->DBTable->setColumnWidth(1,80);//call sign
+  ui->DBTable->setColumnWidth(2,80);//ch/freq
+  ui->DBTable->setColumnWidth(3,100);//name
+  ui->DBTable->setColumnWidth(4,100);//city
+  ui->DBTable->setColumnWidth(5,100);//county
+  ui->DBTable->setColumnWidth(6,550);//remarks
 }
 
 //--------------------------------------------------------------------------------------
