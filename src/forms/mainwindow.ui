@@ -249,7 +249,11 @@
            <enum>QLayout::SetMinAndMaxSize</enum>
           </property>
          </layout>
-        </item>
+<widget class="QTableView" name="DBTable">
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+        </widget>        </item>
        </layout>
       </widget>
      </widget>

@@ -6,16 +6,15 @@
 #include <QMessageBox> // for debuging
 #include <QDebug>
 #include "dbman.h"
+#include "mainwindow.h"
 
-//QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-
-
+static QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
 //-----------------------------------------------------------------------------------------
 QSqlError initDB(QString dbName)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+//    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+//    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbName);
 
     if (!db.open())
@@ -35,9 +34,23 @@ QSqlError initDB(QString dbName)
 
     addRec(rec, "KKLKQ","145.19","Walt","Republic","Ferry"," it's me :)");
     addRec(rec, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","");
-//    addBook(q, QLatin1String("Going Postal"), 2004, pratchettId, fantasy, 3);
 
     return QSqlError();
+}
+
+//-----------------------------------------------------------------------------------------
+void open(QString DBname)
+{
+  if (db.isOpen())
+    db.close();
+
+  db.setDatabaseName(DBname);
+  if (!db.open())
+  {
+    QMessageBox::critical(0,"Cannot open database","Unable to establish a database connection", QMessageBox::Cancel);
+        return;
+  }
+
 }
 
 //-----------------------------------------------------------------------------------------

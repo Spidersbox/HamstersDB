@@ -24,17 +24,12 @@ public:
   void closeEvent(QCloseEvent *close_trigger);
   ~MainWindow();
 
-
-
-
-//    bool saveToDisk(const QString &filename, QNetworkReply* reply);
-
 private:
   Ui::MainWindow *ui;
   QGroupBox *horizontalGroupBox;
-  QTableWidget *DBTable;
-//  QTableView *DBTable;
-
+  QSqlRelationalTableModel *model = nullptr;
+  int CallIdx = 0;
+  int NameIdx = 0;
   QMenuBar *appMenuBar;
   QAction *openAction;
   QAction *createAction;
@@ -63,30 +58,21 @@ private:
 
   /** Create the main UI actions. */
   void createActions();
+
   /** Create the menu bar and sub-menus. */
   void createMenuBar();
+
   /** Create the toolbars */
   void createToolBars();
 
-  void createView();
+  void createView(QString DBname);
   void showError(const QSqlError &err);
-
-//    void download(const QUrl &downTo,QNetworkReply *reply);
 
 private slots:
 
   void on_lineEdit_textEdited(const QString &arg1);
   void initializeTable();
 
-
-//    void start();
-//    void getlist();
-//    void getListFinished(QNetworkReply* reply);
-//    void downloadFinished(QNetworkReply *reply);
-//    void updateProgress(qint64 read, qint64 total);
-//    bool netHandleError(QNetworkReply* reply, QString urlDownload);
-//    void networkTimeout();
-//    static bool isHttpRedirect(QNetworkReply *reply);
 
 public slots:
   /** Show open file dialog */
@@ -99,11 +85,10 @@ public slots:
 
   /** exit this app */
   void quitClicked();
-void shutdownClicked();
+  void shutdownClicked();
 
   void newClicked();
   void deleteClicked();
-//  void stopClicked();
   void nextClicked();
   void previousClicked();
 

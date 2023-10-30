@@ -70,29 +70,6 @@ MainWindow::MainWindow(QWidget *parent)
   /** menubar on form instead */
   menuBar()->setNativeMenuBar(false);
 
-  createView();
-  ui->tableLayout->setMargin(0); ///m
-//  ui->tableLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//  ui->tableLayout->setSizeConstraint(QLayout::SetNoConstraint);
-  ui->tableLayout->addWidget(DBTable);
-
-
-
-/*
-  if (!createConnection())
-    return "cound not connect";
-*/
-
-//  QSqlTableModel model;
-
-//  initializeModel(&model);
-
-//  QTableView *view1 = createView(&model, QObject::tr("Table Model (View 1)"));
-//  QTableView *view2 = createView(&model, QObject::tr("Table Model (View 2)"));
-
-//  view1->show();
-//  view2->move(view1->x() + view1->width() + 20, view1->y());
-//  view2->show();
 
 }
 
@@ -216,22 +193,13 @@ void MainWindow::createActions()
 /** Show open file dialog */
 void MainWindow::openClicked()
 {
-  QString filename=QFileDialog::getOpenFileName(
-              this,"Open database",qApp->applicationDirPath(),
-              "SQL DB files (*.sql)");
+  QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
+                                                "SQL DB files (*.sql)");
 
-  QFile file(filename);
-  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-  {
-    QMessageBox::warning(this,"HamstersDB","opened file "+filename);
+  QMessageBox::warning(this,"HamstersDB","db name "+filename);
+  open(filename);
 
-    file.close();
-  }
-  else
-  {
-    QString mess="Could not open file: "+filename;
-    QMessageBox::warning(this,"HamstersDB",mess);
-  }
+  createView("hams");
 }
 
 //-----------------------------------------------------------------------------------------
@@ -249,6 +217,7 @@ void MainWindow::createClicked()
       showError(err);
       return;
     }
+    createView("hams");
   }
   else
   {
@@ -272,9 +241,8 @@ void MainWindow::createClicked()
         showError(err);
         return;
       }
-      // done.
+      createView("hams");
     }
-
   }
 }
 //-----------------------------------------------------------------------------------------
@@ -373,8 +341,9 @@ void MainWindow::initializeTable()
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::createView()
+void MainWindow::createView(QString DBname)
 {
+/*
 //    QTableView *view = new QTableView;
 //  ui->tableView->setModel(model);
 //  ui->tableView->setWindowTitle(title);
@@ -396,7 +365,30 @@ void MainWindow::createView()
   DBTable->setShowGrid(false);
 
 //  connect(DBTable, SIGNAL(cellActivated(int,int)), this, SLOT(openFileOfItem(int,int)));
+*/
+  model = new QSqlRelationalTableModel(ui->DBTable);
+  model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+//  model->setTable(DBname+".hams");
+  model->setTable("hams");
 
+  // Remember the indexes of the columns:
+  CallIdx = model->fieldIndex("Call");
+  NameIdx = model->fieldIndex("Name");
+
+  model->setHeaderData(CallIdx, Qt::Horizontal, tr("Call Sign"));
+  model->setHeaderData(NameIdx, Qt::Horizontal, tr("Name"));
+  model->setHeaderData(model->fieldIndex("Freq"),Qt::Horizontal, tr("CH/Freq"));
+  model->setHeaderData(model->fieldIndex("City"), Qt::Horizontal, tr("City"));
+  model->setHeaderData(model->fieldIndex("County"),Qt::Horizontal, tr("County"));
+  model->setHeaderData(model->fieldIndex("Remarks"),Qt::Horizontal, tr("Remarks"));
+
+// Populate the model:
+  if (!model->select())
+  {
+    showError(model->lastError());
+    return;
+  }
+  ui->DBTable->setModel(model);
 }
 
 //--------------------------------------------------------------------------------------

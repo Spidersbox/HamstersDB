@@ -3,16 +3,6 @@
 
 #include <QtSql>
 
-//class dbman
-//{
-//public:
-//  static bool ok;
-
-//  static int initDB();
-//  static int initDB(QString dbName);
-//  static void update(int recno);
-
-//};
 
 QSqlError initDB(QString dbName);
 
@@ -24,6 +14,6 @@ const auto HAMS_SQL = QLatin1String(R"(create table hams(id integer primary key,
 
 const auto INSERT_HAMS_SQL = QLatin1String(R"(insert into hams(Call,Freq,Name,City,County,Remarks) values(?, ?, ?, ?, ?,?))");
 
-
+void open(QString DBname);
 #endif
 
