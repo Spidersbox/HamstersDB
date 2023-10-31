@@ -13,8 +13,6 @@ static QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 //-----------------------------------------------------------------------------------------
 QSqlError initDB(QString dbName)
 {
-//    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-//    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbName);
 
     if (!db.open())
@@ -44,13 +42,21 @@ QSqlError insert()
   QSqlQuery rec;
   if (db.isOpen())
   {
-//    if (!rec.exec(HAMS_SQL))
-//      return rec.lastError();
-
     if (!rec.prepare(INSERT_HAMS_SQL))
       return rec.lastError();
 
     addRec(rec, "","","","","","");
+  }
+  return rec.lastError();
+}
+
+//-----------------------------------------------------------------------------------------
+QSqlError removeRow(QSqlRelationalTableModel *tempmodel,int row,int count)
+{
+  QSqlQuery rec;
+  if (db.isOpen())
+  {
+    bool rtn=tempmodel->removeRows(row,count);
   }
   return rec.lastError();
 }
@@ -75,19 +81,6 @@ void closeDB()
 {
 if (db.isOpen())
     db.close();
-}
-//-----------------------------------------------------------------------------------------
-void update(int recno)
-{
-  bool ok=db.open();
-  if(ok)  // is db open?
-  {
-    qDebug() << "dbman::update: database is open, rec # is "<<QString(recno);
-  }
-  else
-  {
-    qDebug() << "dbAdd: database is not open";
-  }
 }
 
 //-----------------------------------------------------------------------------------------

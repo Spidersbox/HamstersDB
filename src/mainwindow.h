@@ -23,12 +23,14 @@ class MainWindow : public QMainWindow
 public:
   MainWindow(QWidget *parent = 0);
   void closeEvent(QCloseEvent *close_trigger);
+  QSqlRelationalTableModel *model = nullptr;
+
   ~MainWindow();
 
 private:
   Ui::MainWindow *ui;
   QGroupBox *horizontalGroupBox;
-  QSqlRelationalTableModel *model = nullptr;
+//  QSqlRelationalTableModel *model = nullptr;
   int CallIdx = 0;
   int NameIdx = 0;
   QDataWidgetMapper *mapper;
@@ -81,9 +83,7 @@ private slots:
   void on_CityEdit_textEdited(const QString &arg1);
   void on_CountyEdit_textEdited(const QString &arg1);
   void on_RemarksEdit_textEdited(const QString &arg1);
-
   void setChanges();
-  void initializeTable();
 
 
 public slots:
@@ -101,8 +101,6 @@ public slots:
 
   void newClicked();
   void deleteClicked();
-//  void nextClicked();
-//  void previousClicked();
   void updateClicked();
   void updateButtons(int row);
 

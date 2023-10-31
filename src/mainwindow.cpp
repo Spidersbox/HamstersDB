@@ -234,8 +234,6 @@ void MainWindow::createActions()
   // table nav toolbar signals
   connect(newButton, SIGNAL(clicked()), this, SLOT(newClicked()));
   connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-//  connect(nextButton, SIGNAL(clicked()), this, SLOT(nextClicked()));
-//  connect(previousButton, SIGNAL(clicked()), this, SLOT(previousClicked()));
   connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
 
 }
@@ -247,10 +245,7 @@ void MainWindow::openClicked()
 {
   QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
                                                 "SQL DB files (*.sql)");
-
-//  QMessageBox::warning(this,"HamstersDB","db name "+filename);
   open(filename);
-
   createView();
 }
 
@@ -283,7 +278,6 @@ void MainWindow::createClicked()
     if(ext !="sql")
       filename+=".sql";
 
-//    QMessageBox::warning(this,"HamstersDB","create db "+filename);
     // check if file exists
     if(!QFileInfo::exists(filename))
     {
@@ -302,8 +296,6 @@ void MainWindow::createClicked()
 // nav-new
 void MainWindow::newClicked()
 {
-//  QMessageBox::warning(this,"warning","nav-New was clicked");
-
   QSqlError err =  insert();
   if (err.type() != QSqlError::NoError)
   {
@@ -313,24 +305,26 @@ void MainWindow::newClicked()
   saveClicked();
   mapper->toLast();
 
-//  int cnt=model->rowCount();
   int cnt=mapper->currentIndex();
   QModelIndex index = ui->DBTable->model()->index(cnt, 0);
   ui->DBTable->setCurrentIndex(index);
-  QMessageBox::warning(this,"warning","row count "+QString(cnt+'0'+1));
-
-//  mapper->setCurrentIndex(cnt);
-
-
-//  mapper->submit();
-//  model->edit(cnt);
 }
 
 //-----------------------------------------------------------------------------------------
 // nav-delete
 void MainWindow::deleteClicked()
 {
-  QMessageBox::warning(this,"warning","nav-Delete button was clicked");
+  int cnt=mapper->currentIndex();
+  QModelIndex index = ui->DBTable->model()->index(cnt-1, 0);
+
+  QSqlError err =  removeRow(model,cnt,1);
+  if (err.type() != QSqlError::NoError)
+  {
+    showError(err);
+    return;
+  }
+  saveClicked();
+  ui->DBTable->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -394,7 +388,6 @@ void MainWindow::updateButtons(int row)
 /** exit this app */
 void MainWindow::quitClicked()
 {
-//  QMessageBox::warning(this,"warning","quit was clicked");
   closeDB();
   qApp->quit();
 }
@@ -403,16 +396,8 @@ void MainWindow::quitClicked()
 /** exit this app */
 void MainWindow::shutdownClicked()
 {
-//  QMessageBox::warning(this,"warning","App shut down detected");
   closeDB();
   qApp->quit();
-}
-
-
-//--------------------------------------------------------------------------------------
-void MainWindow::initializeTable()
-{
-  QMessageBox::warning(this,"warning","initializeTable() called");
 }
 
 //--------------------------------------------------------------------------------------
