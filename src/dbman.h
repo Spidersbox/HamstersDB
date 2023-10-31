@@ -5,6 +5,7 @@
 
 
 QSqlError initDB(QString dbName);
+QSqlError insert();
 
 void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
             const QString &city,const QString &county,const QString &remarks);

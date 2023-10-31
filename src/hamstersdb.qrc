@@ -12,6 +12,9 @@
     <file alias="bt_previous">images/previous.png</file>
     <file alias="bt_previous_hover">images/previous-hover.png</file>
 
+    <file alias="bt_update">images/update.png</file>
+    <file alias="bt_update_hover">images/update-hover.png</file>
+
     <file alias="bt_open">images/opened.png</file>
     <file alias="bt_create">images/create.png</file>
     <file alias="bt_close">images/delete.png</file>

@@ -39,6 +39,23 @@ QSqlError initDB(QString dbName)
 }
 
 //-----------------------------------------------------------------------------------------
+QSqlError insert()
+{
+  QSqlQuery rec;
+  if (db.isOpen())
+  {
+//    if (!rec.exec(HAMS_SQL))
+//      return rec.lastError();
+
+    if (!rec.prepare(INSERT_HAMS_SQL))
+      return rec.lastError();
+
+    addRec(rec, "","","","","","");
+  }
+  return rec.lastError();
+}
+
+//-----------------------------------------------------------------------------------------
 void open(QString DBname)
 {
   if (db.isOpen())

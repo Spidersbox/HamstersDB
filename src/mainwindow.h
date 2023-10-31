@@ -57,6 +57,7 @@ private:
   QPushButton *deleteButton;
   QPushButton *nextButton;
   QPushButton *previousButton;
+  QPushButton *updateButton;
 
 //  QPushButton *searchButton;
 
@@ -75,6 +76,13 @@ private:
 private slots:
 
   void on_CallEdit_textEdited(const QString &arg1);
+  void on_NameEdit_textEdited(const QString &arg1);
+  void on_FreqEdit_textEdited(const QString &arg1);
+  void on_CityEdit_textEdited(const QString &arg1);
+  void on_CountyEdit_textEdited(const QString &arg1);
+  void on_RemarksEdit_textEdited(const QString &arg1);
+
+  void setChanges();
   void initializeTable();
 
 
@@ -95,7 +103,8 @@ public slots:
   void deleteClicked();
 //  void nextClicked();
 //  void previousClicked();
-  void updateButtons();
+  void updateClicked();
+  void updateButtons(int row);
 
 };
 #endif

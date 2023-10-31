@@ -91,6 +91,48 @@ MainWindow::~MainWindow()
 void MainWindow::on_CallEdit_textEdited(const QString &arg1)
 {
   ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_NameEdit_textEdited(const QString &arg1)
+{
+//  ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_FreqEdit_textEdited(const QString &arg1)
+{
+//  ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_CityEdit_textEdited(const QString &arg1)
+{
+//  ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_CountyEdit_textEdited(const QString &arg1)
+{
+//  ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_RemarksEdit_textEdited(const QString &arg1)
+{
+//  ui->CallEdit->setText(arg1.toUpper());
+  setChanges();
+}
+
+//-----------------------------------------------------------------------------------------
+void MainWindow::setChanges()
+{
+  updateButton->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -133,15 +175,19 @@ void MainWindow::createToolBars()
   deleteButton->setEnabled(true);
 
   nextButton = new QPushButton(this);
-  nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}");
+  nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}" ":disabled{background-color:#a9a9a9;}");
   nextButton->setToolTip(tr("go to next record"));
   nextButton->setEnabled(true);
 
   previousButton = new QPushButton(this);
-  previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}");
+  previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}" ":disabled{background-color:#a9a9a9;}");
   previousButton->setToolTip(tr("go to previous record"));
   previousButton->setEnabled(true);
 
+  updateButton = new QPushButton(this);
+  updateButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_update);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_update_hover);}" ":disabled{background-color:#a9a9a9;}");
+  updateButton->setToolTip(tr("save changes to disk"));
+  updateButton->setEnabled(false);
 
   horizontalGroupBox = new QGroupBox;
   QHBoxLayout *navLayout = new QHBoxLayout;
@@ -150,6 +196,7 @@ void MainWindow::createToolBars()
   navLayout->addWidget(deleteButton);
   navLayout->addWidget(previousButton);
   navLayout->addWidget(nextButton);
+  navLayout->addWidget(updateButton);
   navLayout->setContentsMargins(0,0,0,0);
 
   horizontalGroupBox->setLayout(navLayout);
@@ -189,6 +236,7 @@ void MainWindow::createActions()
   connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
 //  connect(nextButton, SIGNAL(clicked()), this, SLOT(nextClicked()));
 //  connect(previousButton, SIGNAL(clicked()), this, SLOT(previousClicked()));
+  connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
 
 }
 
@@ -251,20 +299,66 @@ void MainWindow::createClicked()
   }
 }
 //-----------------------------------------------------------------------------------------
-// menu-new
+// nav-new
 void MainWindow::newClicked()
 {
-  QMessageBox::warning(this,"warning","New was clicked");
+//  QMessageBox::warning(this,"warning","nav-New was clicked");
+
+  QSqlError err =  insert();
+  if (err.type() != QSqlError::NoError)
+  {
+    showError(err);
+    return;
+  }
+  saveClicked();
+  mapper->toLast();
+
+//  int cnt=model->rowCount();
+  int cnt=mapper->currentIndex();
+  QModelIndex index = ui->DBTable->model()->index(cnt, 0);
+  ui->DBTable->setCurrentIndex(index);
+  QMessageBox::warning(this,"warning","row count "+QString(cnt+'0'+1));
+
+//  mapper->setCurrentIndex(cnt);
+
+
+//  mapper->submit();
+//  model->edit(cnt);
+}
+
+//-----------------------------------------------------------------------------------------
+// nav-delete
+void MainWindow::deleteClicked()
+{
+  QMessageBox::warning(this,"warning","nav-Delete button was clicked");
+}
+
+//-----------------------------------------------------------------------------------------
+// nav-update
+void MainWindow::updateClicked()
+{
+  int cnt=mapper->currentIndex();
+  QModelIndex index = ui->DBTable->model()->index(cnt, 0);
+  saveClicked();
+  updateButton->setEnabled(false);
+  ui->DBTable->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------------------
 // menu-save
 void MainWindow::saveClicked()
 {
-  QMessageBox::warning(this,"warning","save was clicked");
-
-// mapper->submit();
-// mapper->setCurrentIndex(itemId);
+  model->database().transaction();
+  if (model->submitAll())
+  {
+    model->database().commit();
+  }
+  else
+  {
+    model->database().rollback();
+    QMessageBox::warning(this, tr("HamstersDB"),tr("The database reported an error: %1")
+                             .arg(model->lastError().text()));
+  }
 }
 
 //-----------------------------------------------------------------------------------------
@@ -289,17 +383,11 @@ void MainWindow::searchCallClicked()
 }
 
 //-----------------------------------------------------------------------------------------
-/** delete button */
-void MainWindow::deleteClicked()
+// update Buttons
+void MainWindow::updateButtons(int row)
 {
-  QMessageBox::warning(this,"warning","delete was clicked");
-}
-
-//-----------------------------------------------------------------------------------------
-/** previous button */
-void MainWindow::updateButtons()
-{
-  QMessageBox::warning(this,"warning","update buttons was called");
+  previousButton->setEnabled(row > 0);
+  nextButton->setEnabled(row < model->rowCount() - 1);
 }
 
 //-----------------------------------------------------------------------------------------
