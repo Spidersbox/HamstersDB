@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
+#include <QKeyEvent>
 
 #include <stdlib.h>
 #include <QtSql>
@@ -25,8 +26,14 @@
 
 #include "mainwindow.h"
 #include "dbman.h"
-#include "ui_mainwindow.h"
+#include "searchform.h"
+#include "callform.h"
+#include "nameform.h"
 
+#include "ui_mainwindow.h"
+//#include "ui_SearchForm.h"
+//#include "ui_NameForm.h"
+//#include "ui_CallForm.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -41,10 +48,12 @@ MainWindow::MainWindow(QWidget *parent)
 
   /** center form on screen */
 #if QT_VERSION < 0x060000
+  QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog mapped without ...
   QRect desktopRect = QApplication::desktop()->availableGeometry(this);
   QPoint center = desktopRect.center();
   move(center.x() - width() * 0.5, center.y() - height() * 0.5);
 #else
+  QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog warning
   QScreen *screen = QGuiApplication::primaryScreen();
   QRect  screenGeometry = screen->geometry();
   int height = screenGeometry.height()/2;
@@ -359,21 +368,27 @@ void MainWindow::saveClicked()
 // menu-search
 void MainWindow::searchClicked()
 {
-  QMessageBox::warning(this,"warning","search was clicked");
+//  QMessageBox::warning(this,"warning","search was clicked");
+  SearchForm *searchform = new SearchForm();
+  searchform->show();
 }
 
 //-----------------------------------------------------------------------------------------
 // menu-search-Name
 void MainWindow::searchNameClicked()
 {
-  QMessageBox::warning(this,"warning","search-Name was clicked");
+//  QMessageBox::warning(this,"warning","search-Name was clicked");
+  NameForm *nameform = new NameForm();
+  nameform->show();
 }
 
 //-----------------------------------------------------------------------------------------
 // menu-search-Call
 void MainWindow::searchCallClicked()
 {
-  QMessageBox::warning(this,"warning","search-Call was clicked");
+//  QMessageBox::warning(this,"warning","search-Call was clicked");
+  CallForm *callform = new CallForm();
+  callform->show();
 }
 
 //-----------------------------------------------------------------------------------------
@@ -455,6 +470,19 @@ void MainWindow::createView()
   ui->DBTable->setColumnWidth(4,100);//city
   ui->DBTable->setColumnWidth(5,100);//county
   ui->DBTable->setColumnWidth(6,550);//remarks
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::keyPressEvent ( QKeyEvent * event ) 
+{
+  switch(event->key())
+  {
+    case Qt::Key_F3:
+      searchClicked();  //we want to handle this
+      break;
+    default:
+      QWidget::keyPressEvent(event);  //let others handle this
+  }
 }
 
 //--------------------------------------------------------------------------------------

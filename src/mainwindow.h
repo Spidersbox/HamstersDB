@@ -10,11 +10,12 @@
 
 #include "ui_mainwindow.h"
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+//class SearchForm;
+//class CallForm;
 
 class MainWindow : public QMainWindow
 {
@@ -29,6 +30,7 @@ public:
 
 private:
   Ui::MainWindow *ui;
+  virtual void  keyPressEvent(QKeyEvent *event);
   QGroupBox *horizontalGroupBox;
 //  QSqlRelationalTableModel *model = nullptr;
   int CallIdx = 0;

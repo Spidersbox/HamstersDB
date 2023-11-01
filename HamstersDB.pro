@@ -7,6 +7,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
+# add no pie so you can click on your app to run in linux
+QMAKE_LFLAGS += -no-pie
+
 #LIBS += -Wl,-Bstatic
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -20,11 +23,20 @@ UI_DIR = build
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
     src/dbman.cpp \
+    src/searchform.cpp \
+    src/callform.cpp \
+    src/nameform.cpp
 
 HEADERS  += src/mainwindow.h \
-    src/dbman.h
+    src/dbman.h \
+    src/searchform.h \
+    src/callform.h \
+    src/nameform.h
 
-FORMS    += src/forms/mainwindow.ui
+FORMS    += src/forms/mainwindow.ui \
+    src/forms/SearchForm.ui \
+    src/forms/NameForm.ui \
+    src/forms/CallForm.ui
 
 RESOURCES += src/hamstersdb.qrc
 windows:RC_FILE = src/hamstersdb.rc
