@@ -19,11 +19,14 @@ public:
 
 private:
   Ui::CallForm *ui;
+  void SetSignals();
 
 private slots:
+  void Call_Button_clicked();
+  void Cancel_Button_clicked();
 
 signals:
-
+  void sendData(QString);
 };
 
 

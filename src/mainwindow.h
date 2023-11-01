@@ -9,6 +9,9 @@
 #include <QDataWidgetMapper>
 
 #include "ui_mainwindow.h"
+#include "callform.h"
+#include "nameform.h"
+#include "searchform.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,6 +33,11 @@ public:
 
 private:
   Ui::MainWindow *ui;
+
+  CallForm *callform=new CallForm();
+  NameForm *nameform=new NameForm();
+  SearchForm *searchform=new SearchForm();
+
   virtual void  keyPressEvent(QKeyEvent *event);
   QGroupBox *horizontalGroupBox;
 //  QSqlRelationalTableModel *model = nullptr;
@@ -74,6 +82,7 @@ private:
   /** Create the toolbars */
   void createToolBars();
 
+
   void createView();
   void showError(const QSqlError &err);
 
@@ -87,6 +96,10 @@ private slots:
   void on_RemarksEdit_textEdited(const QString &arg1);
   void setChanges();
 
+  /** for retrieving data from editforms to mainform */
+  void receiveCall(QString);
+  void receiveName(QString);
+  void receiveSearch(QString,QString);
 
 public slots:
   /** Show open file dialog */

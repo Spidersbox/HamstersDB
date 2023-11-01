@@ -19,10 +19,15 @@ public:
 
 private:
   Ui::SearchForm *ui;
+  void SetSignals();
 
 private slots:
+  void Call_Button_clicked();
+  void Name_Button_clicked();
+  void Cancel_Button_clicked();
 
 signals:
+  void sendData(QString,QString);
 
 };
 

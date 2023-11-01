@@ -369,7 +369,9 @@ void MainWindow::saveClicked()
 void MainWindow::searchClicked()
 {
 //  QMessageBox::warning(this,"warning","search was clicked");
-  SearchForm *searchform = new SearchForm();
+//  SearchForm *searchform = new SearchForm();
+  /** for retrieving data from editform to mainform */
+  connect(searchform, SIGNAL(sendData(QString,QString)), this, SLOT(receiveSearch(QString,QString)));
   searchform->show();
 }
 
@@ -377,8 +379,8 @@ void MainWindow::searchClicked()
 // menu-search-Name
 void MainWindow::searchNameClicked()
 {
-//  QMessageBox::warning(this,"warning","search-Name was clicked");
-  NameForm *nameform = new NameForm();
+  /** for retrieving data from editform to mainform */
+  connect(nameform, SIGNAL(sendData(QString)), this, SLOT(receiveName(QString)));
   nameform->show();
 }
 
@@ -387,8 +389,40 @@ void MainWindow::searchNameClicked()
 void MainWindow::searchCallClicked()
 {
 //  QMessageBox::warning(this,"warning","search-Call was clicked");
-  CallForm *callform = new CallForm();
+//   *callform = new CallForm();
+  /** for retrieving data from editform to mainform */
+  connect(callform, SIGNAL(sendData(QString)), this, SLOT(receiveCall(QString)));
   callform->show();
+}
+
+//-----------------------------------------------------------------------------------------
+/** recieves Call sign from search form */
+void MainWindow::receiveCall(QString line)
+{
+
+  QMessageBox::warning(this,"warning","receiveCall got "+line);
+
+  disconnect(callform, SIGNAL(sendData(QString)), this, SLOT(receiveCall(QString)));
+}
+
+//-----------------------------------------------------------------------------------------
+/** recieves Name from search form */
+void MainWindow::receiveName(QString line)
+{
+
+  QMessageBox::warning(this,"warning","receiveName got "+line);
+
+  disconnect(nameform, SIGNAL(sendData(QString)), this, SLOT(receiveName(QString)));
+}
+
+//-----------------------------------------------------------------------------------------
+/** recieves Name or Callsign from search form */
+void MainWindow::receiveSearch(QString line,QString type)
+{
+
+  QMessageBox::warning(this,"warning","receiveSearch got "+line+" and "+type);
+
+  disconnect(searchform, SIGNAL(sendData(QString,QString)), this, SLOT(receiveSearch(QString,QString)));
 }
 
 //-----------------------------------------------------------------------------------------

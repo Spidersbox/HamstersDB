@@ -19,10 +19,14 @@ public:
 
 private:
   Ui::NameForm *ui;
+  void SetSignals();
 
 private slots:
+  void Name_Button_clicked();
+  void Cancel_Button_clicked();
 
 signals:
+  void sendData(QString);
 
 };
 
