@@ -26,7 +26,7 @@ private slots:
   void Cancel_Button_clicked();
 
 signals:
-  void sendData(QString);
+  void sendData(QString,int);
 
 };
 

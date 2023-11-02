@@ -6,6 +6,7 @@
 
 #include "nameform.h"
 #include "ui_NameForm.h"
+#include "dbman.h"
 #include "mainwindow.h"
 
 NameForm::NameForm(QWidget *parent) :
@@ -47,9 +48,35 @@ void NameForm::SetSignals()
 //-------------------------------------------------------------------------------------------
 void NameForm::Name_Button_clicked()
 {
-  QString line=ui->lineEdit->text();
-  emit sendData(line);// send line to MainWindow
-  close();
+  QString line="%"+ui->lineEdit->text()+"%";
+
+  QStringList recordList=DBman::Select_Name(line);
+qDebug()<<recordList;
+
+  int rec=recordList.count();
+  if(rec<1)
+  {
+// no records found
+  }
+
+  if(rec==1) // found only one record, return it
+  {
+    QStringList recList=recordList[0].split(",");
+    int recno=recList[0].toInt();
+qDebug() <<"recno "<< recno;
+qDebug() <<"call "<< recList[1];
+qDebug() <<"name "<< recList[2];
+    emit sendData(recList[2],recno);// send line to MainWindow
+    close();
+  }
+
+  if(rec>1)
+  {
+// found more than one, pop up list
+  }
+
+//  emit sendData(line);// send line to MainWindow
+//  close();
 }
 
 //-------------------------------------------------------------------------------------------

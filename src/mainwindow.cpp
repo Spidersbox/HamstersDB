@@ -35,6 +35,9 @@
 //#include "ui_NameForm.h"
 //#include "ui_CallForm.h"
 
+class DBman;
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -254,7 +257,7 @@ void MainWindow::openClicked()
 {
   QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
                                                 "SQL DB files (*.sql)");
-  open(filename);
+  DBman::open(filename);
   createView();
 }
 
@@ -268,7 +271,7 @@ void MainWindow::createClicked()
   if(!QFileInfo::exists(default_path))
   {
     // default db does not exist - create it
-    QSqlError err = initDB(default_path);
+    QSqlError err = DBman::initDB(default_path);
     if (err.type() != QSqlError::NoError)
     {
       showError(err);
@@ -291,7 +294,7 @@ void MainWindow::createClicked()
     if(!QFileInfo::exists(filename))
     {
       // default db does not exist - create it
-      QSqlError err = initDB(filename);
+      QSqlError err = DBman::initDB(filename);
       if (err.type() != QSqlError::NoError)
       {
         showError(err);
@@ -305,7 +308,7 @@ void MainWindow::createClicked()
 // nav-new
 void MainWindow::newClicked()
 {
-  QSqlError err =  insert();
+  QSqlError err =  DBman::insert();
   if (err.type() != QSqlError::NoError)
   {
     showError(err);
@@ -326,7 +329,7 @@ void MainWindow::deleteClicked()
   int cnt=mapper->currentIndex();
   QModelIndex index = ui->DBTable->model()->index(cnt-1, 0);
 
-  QSqlError err =  removeRow(model,cnt,1);
+  QSqlError err =  DBman::removeRow(model,cnt,1);
   if (err.type() != QSqlError::NoError)
   {
     showError(err);
@@ -380,7 +383,7 @@ void MainWindow::searchClicked()
 void MainWindow::searchNameClicked()
 {
   /** for retrieving data from editform to mainform */
-  connect(nameform, SIGNAL(sendData(QString)), this, SLOT(receiveName(QString)));
+  connect(nameform, SIGNAL(sendData(QString,int)), this, SLOT(receiveName(QString,int)));
   nameform->show();
 }
 
@@ -407,12 +410,16 @@ void MainWindow::receiveCall(QString line)
 
 //-----------------------------------------------------------------------------------------
 /** recieves Name from search form */
-void MainWindow::receiveName(QString line)
+void MainWindow::receiveName(QString line,int index)
 {
 
   QMessageBox::warning(this,"warning","receiveName got "+line);
 
-  disconnect(nameform, SIGNAL(sendData(QString)), this, SLOT(receiveName(QString)));
+  disconnect(nameform, SIGNAL(sendData(QString,int)), this, SLOT(receiveName(QString,int)));
+  int cnt=mapper->currentIndex();
+  QModelIndex dbindex = ui->DBTable->model()->index(index-1, 0);
+  ui->DBTable->setCurrentIndex(dbindex);
+
 }
 
 //-----------------------------------------------------------------------------------------
@@ -437,7 +444,7 @@ void MainWindow::updateButtons(int row)
 /** exit this app */
 void MainWindow::quitClicked()
 {
-  closeDB();
+  DBman::closeDB();
   qApp->quit();
 }
 
@@ -445,7 +452,7 @@ void MainWindow::quitClicked()
 /** exit this app */
 void MainWindow::shutdownClicked()
 {
-  closeDB();
+  DBman::closeDB();
   qApp->quit();
 }
 

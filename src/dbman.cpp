@@ -5,44 +5,48 @@
 #include <QtSql>
 #include <QMessageBox> // for debuging
 #include <QDebug>
+
 #include "dbman.h"
 #include "mainwindow.h"
+#include "nameform.h"
 
 static QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
+class DBman;
+
+
 //-----------------------------------------------------------------------------------------
-QSqlError initDB(QString dbName)
+QSqlError DBman::initDB(QString dbName)
 {
-    db.setDatabaseName(dbName);
+  db.setDatabaseName(dbName);
 
-    if (!db.open())
-        return db.lastError();
+  if(!db.open())
+    return db.lastError();
 
-    QStringList tables = db.tables();
-    if (tables.contains("hams", Qt::CaseInsensitive))
-        return QSqlError();
-
-    QSqlQuery rec;
-    if (!rec.exec(HAMS_SQL))
-        return rec.lastError();
-
-
-    if (!rec.prepare(INSERT_HAMS_SQL))
-        return rec.lastError();
-
-    addRec(rec, "KKLKQ","145.19","Walt","Republic","Ferry"," it's me :)");
-    addRec(rec, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","");
-
+  QStringList tables = db.tables();
+  if(tables.contains("hams", Qt::CaseInsensitive))
     return QSqlError();
+
+  QSqlQuery query;
+  if(!query.exec(Create_HAMS_Table))
+    return query.lastError();
+
+  if(!query.prepare(Insert_HAMS))
+    return query.lastError();
+
+  addRec(query, "KK7LKQ","145.19","Walt","Republic","Ferry"," it's me :)");
+  addRec(query, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","");
+
+  return QSqlError();
 }
 
 //-----------------------------------------------------------------------------------------
-QSqlError insert()
+QSqlError DBman::insert()
 {
   QSqlQuery rec;
   if (db.isOpen())
   {
-    if (!rec.prepare(INSERT_HAMS_SQL))
+    if (!rec.prepare(Insert_HAMS))
       return rec.lastError();
 
     addRec(rec, "","","","","","");
@@ -51,7 +55,7 @@ QSqlError insert()
 }
 
 //-----------------------------------------------------------------------------------------
-QSqlError removeRow(QSqlRelationalTableModel *tempmodel,int row,int count)
+QSqlError DBman::removeRow(QSqlRelationalTableModel *tempmodel,int row,int count)
 {
   QSqlQuery rec;
   if (db.isOpen())
@@ -62,7 +66,7 @@ QSqlError removeRow(QSqlRelationalTableModel *tempmodel,int row,int count)
 }
 
 //-----------------------------------------------------------------------------------------
-void open(QString DBname)
+void DBman::open(QString DBname)
 {
   if (db.isOpen())
     db.close();
@@ -77,14 +81,14 @@ void open(QString DBname)
 }
 
 //-----------------------------------------------------------------------------------------
-void closeDB()
+void DBman::closeDB()
 {
 if (db.isOpen())
     db.close();
 }
 
 //-----------------------------------------------------------------------------------------
-void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
+void DBman::addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
             const QString &city,const QString &county,const QString &remarks)
 {
   rec.addBindValue(call);
@@ -96,3 +100,40 @@ void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString
   rec.exec();
 }
 
+//-----------------------------------------------------------------------------------------
+QStringList DBman::Select_Name(QString name)
+{
+  QSqlQuery query;
+  QStringList recordList;
+  int recno=0;
+  if (db.isOpen())
+  {
+    query.prepare("SELECT * FROM hams WHERE Name like ?");
+    query.addBindValue(name);
+    if(query.exec())
+    {
+      while(query.next())
+      {
+        QSqlRecord record = query.record();
+        for(int i=0; i<record.count(); ++i)
+        {
+//          qDebug()<<"fieldname"<<record.fieldName(i);
+          if(record.fieldName(i)=="Name")
+          {
+            QString temp=query.value(i-3).toString()+","; // -3 id
+            temp +=query.value(i-2).toString()+",";       // -2 call
+            temp +=query.value(i).toString()+",";         // 
+            temp +=query.value(i+1).toString()+",";       // +1 city
+            temp +=query.value(i+2).toString();           // +4 county
+            recordList.append(temp);
+//            qDebug()<<"value"<<query.value(i).toString();
+          }
+        }
+        recno++;
+      }
+    return recordList;
+    }
+    else QMessageBox::critical(0,"HamstersDB","query error :"+query.lastError().text(), QMessageBox::Cancel);
+  } else QMessageBox::critical(0,"HamstersDB","Database is not open", QMessageBox::Cancel);
+  return recordList;
+}

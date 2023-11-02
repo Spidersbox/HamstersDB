@@ -19,6 +19,8 @@ QT_END_NAMESPACE
 
 //class SearchForm;
 //class CallForm;
+class DBman;
+
 
 class MainWindow : public QMainWindow
 {
@@ -98,7 +100,7 @@ private slots:
 
   /** for retrieving data from editforms to mainform */
   void receiveCall(QString);
-  void receiveName(QString);
+  void receiveName(QString,int);
   void receiveSearch(QString,QString);
 
 public slots:
