@@ -25,9 +25,11 @@ private slots:
   void Call_Button_clicked();
   void Name_Button_clicked();
   void Cancel_Button_clicked();
+  void receiveCallRec(int);
+  void receiveNameRec(int);
 
 signals:
-  void sendData(QString,QString);
+  void sendData(int);
 
 };
 

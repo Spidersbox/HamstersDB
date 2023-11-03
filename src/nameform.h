@@ -24,10 +24,10 @@ private:
 private slots:
   void Name_Button_clicked();
   void Cancel_Button_clicked();
+  void receiveNameRec(int);
 
 signals:
-  void sendData(QString,int);
-
+  void sendData(int); //receive from mainwindow
 };
 
 

@@ -22,12 +22,11 @@ private:
   void grokList(QStringList);
 
 private slots:
-//  void Name_Button_clicked();
+  void Ok_Button_clicked();
   void Cancel_Button_clicked();
 
 signals:
-//  void sendData(QString,int);
-
+  void sendDataPicker(int); // receive from nameform and callform
 };
 
 

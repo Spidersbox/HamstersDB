@@ -21,7 +21,7 @@
   #include <QScreen>
 #endif
 
-#include <QMessageBox> // for debuging
+#include <QMessageBox>
 #include <QDebug>
 
 #include "mainwindow.h"
@@ -31,9 +31,6 @@
 #include "nameform.h"
 
 #include "ui_mainwindow.h"
-//#include "ui_SearchForm.h"
-//#include "ui_NameForm.h"
-//#include "ui_CallForm.h"
 
 class DBman;
 
@@ -107,37 +104,32 @@ void MainWindow::on_CallEdit_textEdited(const QString &arg1)
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_NameEdit_textEdited(const QString &arg1)
+void MainWindow::on_NameEdit_textEdited()
 {
-//  ui->CallEdit->setText(arg1.toUpper());
   setChanges();
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_FreqEdit_textEdited(const QString &arg1)
+void MainWindow::on_FreqEdit_textEdited()
 {
-//  ui->CallEdit->setText(arg1.toUpper());
   setChanges();
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_CityEdit_textEdited(const QString &arg1)
+void MainWindow::on_CityEdit_textEdited()
 {
-//  ui->CallEdit->setText(arg1.toUpper());
   setChanges();
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_CountyEdit_textEdited(const QString &arg1)
+void MainWindow::on_CountyEdit_textEdited()
 {
-//  ui->CallEdit->setText(arg1.toUpper());
   setChanges();
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::on_RemarksEdit_textEdited(const QString &arg1)
+void MainWindow::on_RemarksEdit_textEdited()
 {
-//  ui->CallEdit->setText(arg1.toUpper());
   setChanges();
 }
 
@@ -371,10 +363,8 @@ void MainWindow::saveClicked()
 // menu-search
 void MainWindow::searchClicked()
 {
-//  QMessageBox::warning(this,"warning","search was clicked");
-//  SearchForm *searchform = new SearchForm();
   /** for retrieving data from editform to mainform */
-  connect(searchform, SIGNAL(sendData(QString,QString)), this, SLOT(receiveSearch(QString,QString)));
+  connect(searchform, SIGNAL(sendData(int)), this, SLOT(receiveSearch(int)));
   searchform->show();
 }
 
@@ -383,7 +373,7 @@ void MainWindow::searchClicked()
 void MainWindow::searchNameClicked()
 {
   /** for retrieving data from editform to mainform */
-  connect(nameform, SIGNAL(sendData(QString,int)), this, SLOT(receiveName(QString,int)));
+  connect(nameform, SIGNAL(sendData(int)), this, SLOT(receiveName(int)));
   nameform->show();
 }
 
@@ -391,45 +381,36 @@ void MainWindow::searchNameClicked()
 // menu-search-Call
 void MainWindow::searchCallClicked()
 {
-//  QMessageBox::warning(this,"warning","search-Call was clicked");
-//   *callform = new CallForm();
   /** for retrieving data from editform to mainform */
-  connect(callform, SIGNAL(sendData(QString)), this, SLOT(receiveCall(QString)));
+  connect(callform, SIGNAL(sendData(int)), this, SLOT(receiveCall(int)));
   callform->show();
 }
 
 //-----------------------------------------------------------------------------------------
-/** recieves Call sign from search form */
-void MainWindow::receiveCall(QString line)
+// recieves Call sign from search form
+void MainWindow::receiveCall(int index)
 {
-
-  QMessageBox::warning(this,"warning","receiveCall got "+line);
-
-  disconnect(callform, SIGNAL(sendData(QString)), this, SLOT(receiveCall(QString)));
-}
-
-//-----------------------------------------------------------------------------------------
-/** recieves Name from search form */
-void MainWindow::receiveName(QString line,int index)
-{
-
-  QMessageBox::warning(this,"warning","receiveName got "+line);
-
-  disconnect(nameform, SIGNAL(sendData(QString,int)), this, SLOT(receiveName(QString,int)));
-  int cnt=mapper->currentIndex();
+  disconnect(callform, SIGNAL(sendData(int)), this, SLOT(receiveCall(int)));
   QModelIndex dbindex = ui->DBTable->model()->index(index-1, 0);
   ui->DBTable->setCurrentIndex(dbindex);
-
 }
 
 //-----------------------------------------------------------------------------------------
-/** recieves Name or Callsign from search form */
-void MainWindow::receiveSearch(QString line,QString type)
+// recieves Name from search form
+void MainWindow::receiveName(int index)
 {
+  disconnect(nameform, SIGNAL(sendData(int)), this, SLOT(receiveName(int)));
+  QModelIndex dbindex = ui->DBTable->model()->index(index-1, 0);
+  ui->DBTable->setCurrentIndex(dbindex);
+}
 
-  QMessageBox::warning(this,"warning","receiveSearch got "+line+" and "+type);
-
-  disconnect(searchform, SIGNAL(sendData(QString,QString)), this, SLOT(receiveSearch(QString,QString)));
+//-----------------------------------------------------------------------------------------
+// recieves Name or Callsign from search
+void MainWindow::receiveSearch(int index)
+{
+  disconnect(searchform, SIGNAL(sendData(int)), this, SLOT(receiveSearch(int)));
+  QModelIndex dbindex = ui->DBTable->model()->index(index-1, 0);
+  ui->DBTable->setCurrentIndex(dbindex);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -441,7 +422,7 @@ void MainWindow::updateButtons(int row)
 }
 
 //-----------------------------------------------------------------------------------------
-/** exit this app */
+// exit this app
 void MainWindow::quitClicked()
 {
   DBman::closeDB();
@@ -449,7 +430,7 @@ void MainWindow::quitClicked()
 }
 
 //-----------------------------------------------------------------------------------------
-/** exit this app */
+// exit this app
 void MainWindow::shutdownClicked()
 {
   DBman::closeDB();

@@ -2,6 +2,7 @@
 #define CALLFORM_H
 
 #include <QWidget>
+#include "pickerform.h"
 
 
 namespace Ui
@@ -24,9 +25,10 @@ private:
 private slots:
   void Call_Button_clicked();
   void Cancel_Button_clicked();
+  void receiveCallRec(int);
 
 signals:
-  void sendData(QString);
+  void sendData(int);
 };
 
 

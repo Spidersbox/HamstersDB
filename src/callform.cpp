@@ -3,10 +3,12 @@
 #else
   #include <QScreen>
 #endif
+#include <QMessageBox>
 
 #include "callform.h"
 #include "ui_CallForm.h"
-#include "mainwindow.h"
+#include "dbman.h"
+#include "pickerform.h"
 
 CallForm::CallForm(QWidget *parent) :
     QWidget(parent),
@@ -29,6 +31,7 @@ CallForm::CallForm(QWidget *parent) :
 
   // Create actions for the toolbar, menu bar and tray/dock icon
   SetSignals();
+  ui->lineEdit->setFocus();
 
 }
 
@@ -48,8 +51,37 @@ void CallForm::SetSignals()
 //-------------------------------------------------------------------------------------------
 void CallForm::Call_Button_clicked()
 {
-  QString line=ui->lineEdit->text();
-  emit sendData(line);// send line to MainWindow
+  QString line="%"+ui->lineEdit->text()+"%";
+
+  QStringList recordList=DBman::Select_Call(line);
+
+  int rec=recordList.count();
+  if(rec<1) // no records found
+  {
+    QString err=ui->lineEdit->text();
+    QMessageBox::warning(this,"HamstersDB Search","no records found for "+err);
+  }
+
+  if(rec==1) // found only one record, return it
+  {
+    QStringList recList=recordList[0].split(",");
+    int recno=recList[0].toInt();
+    emit sendData(recno);// send line to MainWindow
+    close();
+  }
+
+  if(rec>1) // found more than one, pop up list
+  {
+    PickerForm *picker = new PickerForm(recordList);
+    connect(picker, SIGNAL(sendDataPicker(int)), this, SLOT(receiveCallRec(int)));
+    picker->show();
+  }
+}
+
+//-------------------------------------------------------------------------------------------
+void CallForm::receiveCallRec(int recno)
+{
+  emit sendData(recno);// send line to MainWindow
   close();
 }
 

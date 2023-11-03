@@ -59,9 +59,8 @@ QSqlError DBman::removeRow(QSqlRelationalTableModel *tempmodel,int row,int count
 {
   QSqlQuery rec;
   if (db.isOpen())
-  {
-    bool rtn=tempmodel->removeRows(row,count);
-  }
+    tempmodel->removeRows(row,count);
+
   return rec.lastError();
 }
 
@@ -125,6 +124,45 @@ QStringList DBman::Select_Name(QString name)
             temp +=query.value(i).toString()+",";         // 
             temp +=query.value(i+1).toString()+",";       // +1 city
             temp +=query.value(i+2).toString();           // +4 county
+            recordList.append(temp);
+//            qDebug()<<"value"<<query.value(i).toString();
+          }
+        }
+        recno++;
+      }
+    return recordList;
+    }
+    else QMessageBox::critical(0,"HamstersDB","query error :"+query.lastError().text(), QMessageBox::Cancel);
+  } else QMessageBox::critical(0,"HamstersDB","Database is not open", QMessageBox::Cancel);
+  return recordList;
+}
+
+//-----------------------------------------------------------------------------------------
+QStringList DBman::Select_Call(QString name)
+{
+  QSqlQuery query;
+  QStringList recordList;
+  int recno=0;
+  if (db.isOpen())
+  {
+    query.prepare("SELECT * FROM hams WHERE Call like ?");
+    query.addBindValue(name);
+    if(query.exec())
+    {
+      while(query.next())
+      {
+        QSqlRecord record = query.record();
+        for(int i=0; i<record.count(); ++i)
+        {
+//          qDebug()<<"fieldname"<<record.fieldName(i);
+          if(record.fieldName(i)=="Call")
+          {
+//            QString temp=query.value(i-2).toString()+","; // -2 id
+            QString temp =query.value(i-1).toString()+",";       // -1 id
+            temp +=query.value(i).toString()+",";         // call
+            temp +=query.value(i+1).toString()+",";       // +1 name
+            temp +=query.value(i+2).toString();           // +2 city
+            temp +=query.value(i+3).toString();           // +3 county
             recordList.append(temp);
 //            qDebug()<<"value"<<query.value(i).toString();
           }

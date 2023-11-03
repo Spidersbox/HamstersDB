@@ -91,17 +91,19 @@ private:
 private slots:
 
   void on_CallEdit_textEdited(const QString &arg1);
-  void on_NameEdit_textEdited(const QString &arg1);
-  void on_FreqEdit_textEdited(const QString &arg1);
-  void on_CityEdit_textEdited(const QString &arg1);
-  void on_CountyEdit_textEdited(const QString &arg1);
-  void on_RemarksEdit_textEdited(const QString &arg1);
+  void on_NameEdit_textEdited();
+  void on_FreqEdit_textEdited();
+  void on_CityEdit_textEdited();
+  void on_CountyEdit_textEdited();
+  void on_RemarksEdit_textEdited();
   void setChanges();
 
   /** for retrieving data from editforms to mainform */
-  void receiveCall(QString);
-  void receiveName(QString,int);
-  void receiveSearch(QString,QString);
+//  void receiveCall(QString,int);
+  void receiveCall(int);
+//  void receiveName(QString,int);
+  void receiveName(int);
+  void receiveSearch(int);
 
 public slots:
   /** Show open file dialog */

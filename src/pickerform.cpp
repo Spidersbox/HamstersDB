@@ -43,7 +43,7 @@ PickerForm::~PickerForm()
 void PickerForm::SetSignals()
 {
   // button signals
-//  connect(ui->Name_Button, &QPushButton::released, this, &NameForm::Name_Button_clicked);
+  connect(ui->ok_Button, &QPushButton::released, this, &PickerForm::Ok_Button_clicked);
   connect(ui->cancel_Button, &QPushButton::released, this, &PickerForm::Cancel_Button_clicked);
 }
 
@@ -56,9 +56,6 @@ void PickerForm::grokList(QStringList recordList)
   for(int t=0;t<rec;t++)
   {
     QStringList recList=recordList[t].split(",");
-    int recno=recList[0].toInt();
-
-qDebug() <<"recno "<< recno << recList[1]<< recList[2]<< recList[3];
 
     currentRow = PickerForm::ui->tableWidget->rowCount();  
     ui->tableWidget->setRowCount(currentRow + 1);
@@ -67,48 +64,25 @@ qDebug() <<"recno "<< recno << recList[1]<< recList[2]<< recList[3];
     ui->tableWidget->setItem(currentRow, 1, new QTableWidgetItem(recList[1]));
     ui->tableWidget->setItem(currentRow, 2, new QTableWidgetItem(recList[2]));
     ui->tableWidget->setItem(currentRow, 3, new QTableWidgetItem(recList[3]));
-
   }
-
 }
 
-/*
 //-------------------------------------------------------------------------------------------
-void NameForm::Name_Button_clicked()
+void PickerForm::Ok_Button_clicked()
 {
-  QString line="%"+ui->lineEdit->text()+"%";
-
-  QStringList recordList=DBman::Select_Name(line);
-qDebug()<<recordList;
-
-  int rec=recordList.count();
-  if(rec<1) // no records found
+  int selected=ui->tableWidget->currentRow();
+  QString a=ui->tableWidget->item(selected,0)->text();
+  bool err;
+  int recno = a.toInt(&err);
+  if (!err)
   {
-qDebug() <<"rec "<< rec;
-
+    qDebug() << "PickerForm: a toInt error";
   }
 
-  if(rec==1) // found only one record, return it
-  {
-    QStringList recList=recordList[0].split(",");
-    int recno=recList[0].toInt();
-qDebug() <<"recno "<< recno;
-qDebug() <<"call "<< recList[1];
-qDebug() <<"name "<< recList[2];
-    emit sendData(recList[2],recno);// send line to MainWindow
-    close();
-  }
-
-  if(rec>1)
-  {
-// found more than one, pop up list
-  }
-
-//  emit sendData(line);// send line to MainWindow
-//  close();
+  emit sendDataPicker(recno);// send line back to caller
+  close();
 }
 
-*/
 //-------------------------------------------------------------------------------------------
 void PickerForm::Cancel_Button_clicked()
 {

@@ -20,6 +20,7 @@ static QSqlError insert();
 static QSqlError initDB(QString dbName);
 static void open(QString DBname);
 static QStringList Select_Name(QString name);
+static QStringList Select_Call(QString name);
 
 static QSqlError removeRow(QSqlRelationalTableModel *tempmodel,int row, int count);
 
