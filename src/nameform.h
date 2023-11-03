@@ -2,7 +2,7 @@
 #define NAMEFORM_H
 
 #include <QWidget>
-
+#include "pickerform.h"
 
 namespace Ui
 {

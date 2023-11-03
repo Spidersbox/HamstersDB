@@ -23,17 +23,20 @@ UI_DIR = build
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
     src/dbman.cpp \
+    src/pickerform.cpp \
     src/searchform.cpp \
     src/callform.cpp \
     src/nameform.cpp
 
 HEADERS  += src/mainwindow.h \
     src/dbman.h \
+    src/pickerform.h \
     src/searchform.h \
     src/callform.h \
     src/nameform.h
 
 FORMS    += src/forms/mainwindow.ui \
+    src/forms/PickerForm.ui \
     src/forms/SearchForm.ui \
     src/forms/NameForm.ui \
     src/forms/CallForm.ui
