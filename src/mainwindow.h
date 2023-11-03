@@ -17,8 +17,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-//class SearchForm;
-//class CallForm;
 class DBman;
 
 
@@ -30,7 +28,8 @@ public:
   MainWindow(QWidget *parent = 0);
   void closeEvent(QCloseEvent *close_trigger);
   QSqlRelationalTableModel *model = nullptr;
-
+  QString last_db;
+  QString clean_title;
   ~MainWindow();
 
 private:
@@ -42,7 +41,6 @@ private:
 
   virtual void  keyPressEvent(QKeyEvent *event);
   QGroupBox *horizontalGroupBox;
-//  QSqlRelationalTableModel *model = nullptr;
   int CallIdx = 0;
   int NameIdx = 0;
   QDataWidgetMapper *mapper;
@@ -58,7 +56,6 @@ private:
 
   /** file submenu options */
   QAction *editAction;
-  QAction *saveAction;
 
 
   /** Toolbar actions */
@@ -73,8 +70,6 @@ private:
   QPushButton *previousButton;
   QPushButton *updateButton;
 
-//  QPushButton *searchButton;
-
   /** Create the main UI actions. */
   void createActions();
 
@@ -84,7 +79,11 @@ private:
   /** Create the toolbars */
   void createToolBars();
 
+  void loadSettings();
+  void saveSettings();
+  void optionChanged();
 
+  void saveChanges();
   void createView();
   void showError(const QSqlError &err);
 
@@ -99,9 +98,7 @@ private slots:
   void setChanges();
 
   /** for retrieving data from editforms to mainform */
-//  void receiveCall(QString,int);
   void receiveCall(int);
-//  void receiveName(QString,int);
   void receiveName(int);
   void receiveSearch(int);
 
@@ -109,7 +106,6 @@ public slots:
   /** Show open file dialog */
   void openClicked();
   void createClicked();
-  void saveClicked();
   void searchClicked();
   void searchNameClicked();
   void searchCallClicked();

@@ -1,9 +1,9 @@
 #include <QtCore/QCoreApplication>
 #include <QFileInfo>
 #include <QSqlDatabase>
-#include <QSqlError>  // db.lastError error reporting
+#include <QSqlError>
 #include <QtSql>
-#include <QMessageBox> // for debuging
+#include <QMessageBox>
 #include <QDebug>
 
 #include "dbman.h"
@@ -116,7 +116,6 @@ QStringList DBman::Select_Name(QString name)
         QSqlRecord record = query.record();
         for(int i=0; i<record.count(); ++i)
         {
-//          qDebug()<<"fieldname"<<record.fieldName(i);
           if(record.fieldName(i)=="Name")
           {
             QString temp=query.value(i-3).toString()+","; // -3 id
@@ -125,7 +124,6 @@ QStringList DBman::Select_Name(QString name)
             temp +=query.value(i+1).toString()+",";       // +1 city
             temp +=query.value(i+2).toString();           // +4 county
             recordList.append(temp);
-//            qDebug()<<"value"<<query.value(i).toString();
           }
         }
         recno++;
@@ -154,17 +152,14 @@ QStringList DBman::Select_Call(QString name)
         QSqlRecord record = query.record();
         for(int i=0; i<record.count(); ++i)
         {
-//          qDebug()<<"fieldname"<<record.fieldName(i);
           if(record.fieldName(i)=="Call")
           {
-//            QString temp=query.value(i-2).toString()+","; // -2 id
             QString temp =query.value(i-1).toString()+",";       // -1 id
             temp +=query.value(i).toString()+",";         // call
             temp +=query.value(i+1).toString()+",";       // +1 name
             temp +=query.value(i+2).toString();           // +2 city
             temp +=query.value(i+3).toString();           // +3 county
             recordList.append(temp);
-//            qDebug()<<"value"<<query.value(i).toString();
           }
         }
         recno++;

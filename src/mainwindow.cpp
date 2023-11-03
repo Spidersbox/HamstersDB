@@ -8,10 +8,10 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QKeyEvent>
-
-#include <stdlib.h>
+#include <QSettings>
 #include <QtSql>
 #include <QDataWidgetMapper>
+#include <QSize>
 
 //#include <QtGui/QApplication>  //qt4
 #include <QApplication>  //qt5
@@ -20,6 +20,7 @@
 #else
   #include <QScreen>
 #endif
+#include <stdlib.h>
 
 #include <QMessageBox>
 #include <QDebug>
@@ -40,26 +41,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  resize(840, 450);
-  setWindowTitle(tr("Hamsters DB"));
+
+  setWindowTitle("Hamsters DB");
+
+  // load settings from ini file
+  loadSettings();
+
 
   QIcon icon(":/images/favicon"); 
   setWindowIcon(icon);
 
-  /** center form on screen */
-#if QT_VERSION < 0x060000
-  QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog mapped without ...
-  QRect desktopRect = QApplication::desktop()->availableGeometry(this);
-  QPoint center = desktopRect.center();
-  move(center.x() - width() * 0.5, center.y() - height() * 0.5);
-#else
-  QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog warning
-  QScreen *screen = QGuiApplication::primaryScreen();
-  QRect  screenGeometry = screen->geometry();
-  int height = screenGeometry.height()/2;
-  int width = screenGeometry.width()/2;
-  move(width-400,height-225);
-#endif
    
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":/images/favicon"));
@@ -69,17 +60,24 @@ MainWindow::MainWindow(QWidget *parent)
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
-  /** Create the toolbars */
+  // Create the toolbars
   createToolBars();
 
-  /** Create actions for the toolbar, menu bar and tray/dock icon */
+  // Create actions for the toolbar, menu bar and tray/dock icon
   createActions();
 
-  /** Create application menu bar */
+  // Create application menu bar
   createMenuBar();
-  /** menubar on form instead */
-  menuBar()->setNativeMenuBar(false);
 
+  // menubar on form instead
+  menuBar()->setNativeMenuBar(false);
+  if(last_db.length() >1)
+  {
+    DBman::open(last_db);
+    clean_title="Hamsters DB "+last_db;
+    setWindowTitle(clean_title);
+    createView();
+  }
 
 }
 
@@ -137,6 +135,7 @@ void MainWindow::on_RemarksEdit_textEdited()
 void MainWindow::setChanges()
 {
   updateButton->setEnabled(true);
+  setWindowTitle(clean_title+" not saved");
 }
 
 //-----------------------------------------------------------------------------------------
@@ -153,13 +152,12 @@ void MainWindow::createMenuBar()
 #endif
 
   // Configure the menus
-  QMenu *file = appMenuBar->addMenu(tr("&File"));
+  QMenu *file = appMenuBar->addMenu("&File");
   file->addAction(openAction);
   file->addAction(createAction);
-  file->addAction(saveAction);
   file->addAction(quitAction);
 
-  QMenu *search = appMenuBar->addMenu(tr("&Search"));
+  QMenu *search = appMenuBar->addMenu("&Search");
   search->addAction(searchNameAction);
   search->addAction(searchCallAction);
 
@@ -170,27 +168,27 @@ void MainWindow::createToolBars()
 {
   newButton = new QPushButton(this);
   newButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_new); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_new_hover);}");
-  newButton->setToolTip(tr("Add a new blank record"));
+  newButton->setToolTip("Add a new blank record");
   newButton->setEnabled(true);
 
   deleteButton = new QPushButton(this);
   deleteButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_delete); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_delete_hover);}");
-  deleteButton->setToolTip(tr("Delete this record"));
+  deleteButton->setToolTip("Delete this record");
   deleteButton->setEnabled(true);
 
   nextButton = new QPushButton(this);
   nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}" ":disabled{background-color:#a9a9a9;}");
-  nextButton->setToolTip(tr("go to next record"));
+  nextButton->setToolTip("go to next record");
   nextButton->setEnabled(true);
 
   previousButton = new QPushButton(this);
   previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}" ":disabled{background-color:#a9a9a9;}");
-  previousButton->setToolTip(tr("go to previous record"));
+  previousButton->setToolTip("go to previous record");
   previousButton->setEnabled(true);
 
   updateButton = new QPushButton(this);
   updateButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_update);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_update_hover);}" ":disabled{background-color:#a9a9a9;}");
-  updateButton->setToolTip(tr("save changes to disk"));
+  updateButton->setToolTip("save changes to disk");
   updateButton->setEnabled(false);
 
   horizontalGroupBox = new QGroupBox;
@@ -212,25 +210,22 @@ void MainWindow::createActions()
 {
 
   // main menu actions
-  openAction = new QAction(QIcon(":/images/bt_open"), tr("&Open database file"), this);
-  openAction->setToolTip(tr("Open a database file"));
-  createAction = new QAction(QIcon(":/images/bt_create"), tr("&Create new database file"), this);
-  createAction->setToolTip(tr("Create a new database file"));
-  saveAction = new QAction(QIcon(":/images/bt_save"), tr("&Save database to a file"), this);
-  saveAction->setToolTip(tr("save the database"));
+  openAction = new QAction(QIcon(":/images/bt_open"),"&Open database file", this);
+  openAction->setToolTip("Open a database file");
+  createAction = new QAction(QIcon(":/images/bt_create"),"&Create new database file", this);
+  createAction->setToolTip("Create a new database file");
 
-  quitAction = new QAction(QIcon(":/images/bt_close"), tr("E&xit"), this);
-  quitAction->setToolTip(tr("Quit application"));
+  quitAction = new QAction(QIcon(":/images/bt_close"),"E&xit", this);
+  quitAction->setToolTip("Quit application");
 
-  searchNameAction = new QAction(QIcon(":/images/bt_search_name"), tr("by Name"), this);
-  searchNameAction->setToolTip(tr("search by name"));
-  searchCallAction = new QAction(QIcon(":/images/bt_search_call"), tr("by Call"), this);
-  searchCallAction->setToolTip(tr("search by callsign"));
+  searchNameAction = new QAction(QIcon(":/images/bt_search_name"),"by Name", this);
+  searchNameAction->setToolTip("search by name");
+  searchCallAction = new QAction(QIcon(":/images/bt_search_call"),"by Call", this);
+  searchCallAction->setToolTip("search by callsign");
 
   // main menu signals
   connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
   connect(createAction, SIGNAL(triggered()), this, SLOT(createClicked()));
-  connect(saveAction, SIGNAL(triggered()), this, SLOT(saveClicked()));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(quitClicked()));
   connect(searchNameAction, SIGNAL(triggered()), this, SLOT(searchNameClicked()));
   connect(searchCallAction, SIGNAL(triggered()), this, SLOT(searchCallClicked()));
@@ -244,12 +239,15 @@ void MainWindow::createActions()
 
 
 //-----------------------------------------------------------------------------------------
-/** Show open file dialog */
+// Show open file dialog
 void MainWindow::openClicked()
 {
   QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
-                                                "SQL DB files (*.sql)");
+                                                "SQL DB files (*.db);;(*.sql)");
+  last_db=filename;
   DBman::open(filename);
+  clean_title="Hamsters DB "+filename;
+  setWindowTitle(clean_title);
   createView();
 }
 
@@ -257,7 +255,7 @@ void MainWindow::openClicked()
 // menu-create new db
 void MainWindow::createClicked()
 {
-  QString default_path=qApp->applicationDirPath()+"/HAMS.sql";
+  QString default_path=qApp->applicationDirPath()+"/HAMS.db";
 
   // check to see if default db exists
   if(!QFileInfo::exists(default_path))
@@ -269,18 +267,20 @@ void MainWindow::createClicked()
       showError(err);
       return;
     }
+    clean_title="Hamsters DB "+default_path;
+    setWindowTitle(clean_title);
     createView();
   }
   else
   {
     QString filename=QFileDialog::getSaveFileName(
               this,"Create database",qApp->applicationDirPath(),
-              "SQL DB files (*.sql)");
+              "SQL DB files (*.db)");
 
     QFileInfo Finfo(filename);
     QString ext = Finfo.suffix();
-    if(ext !="sql")
-      filename+=".sql";
+    if(ext !="db")
+      filename+=".db";
 
     // check if file exists
     if(!QFileInfo::exists(filename))
@@ -306,7 +306,7 @@ void MainWindow::newClicked()
     showError(err);
     return;
   }
-  saveClicked();
+  saveChanges();
   mapper->toLast();
 
   int cnt=mapper->currentIndex();
@@ -327,7 +327,7 @@ void MainWindow::deleteClicked()
     showError(err);
     return;
   }
-  saveClicked();
+  saveChanges();
   ui->DBTable->setCurrentIndex(index);
 }
 
@@ -337,25 +337,25 @@ void MainWindow::updateClicked()
 {
   int cnt=mapper->currentIndex();
   QModelIndex index = ui->DBTable->model()->index(cnt, 0);
-  saveClicked();
+  saveChanges();
   updateButton->setEnabled(false);
   ui->DBTable->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------------------
-// menu-save
-void MainWindow::saveClicked()
+// save changes to disk
+void MainWindow::saveChanges()
 {
   model->database().transaction();
   if (model->submitAll())
   {
     model->database().commit();
+    setWindowTitle(clean_title);
   }
   else
   {
     model->database().rollback();
-    QMessageBox::warning(this, tr("HamstersDB"),tr("The database reported an error: %1")
-                             .arg(model->lastError().text()));
+    QMessageBox::warning(this,"HamstersDB","The database reported an error: "+model->lastError().text());
   }
 }
 
@@ -363,7 +363,7 @@ void MainWindow::saveClicked()
 // menu-search
 void MainWindow::searchClicked()
 {
-  /** for retrieving data from editform to mainform */
+  // for retrieving data from editform to mainform
   connect(searchform, SIGNAL(sendData(int)), this, SLOT(receiveSearch(int)));
   searchform->show();
 }
@@ -372,7 +372,7 @@ void MainWindow::searchClicked()
 // menu-search-Name
 void MainWindow::searchNameClicked()
 {
-  /** for retrieving data from editform to mainform */
+  // for retrieving data from editform to mainform
   connect(nameform, SIGNAL(sendData(int)), this, SLOT(receiveName(int)));
   nameform->show();
 }
@@ -381,7 +381,7 @@ void MainWindow::searchNameClicked()
 // menu-search-Call
 void MainWindow::searchCallClicked()
 {
-  /** for retrieving data from editform to mainform */
+  // for retrieving data from editform to mainform
   connect(callform, SIGNAL(sendData(int)), this, SLOT(receiveCall(int)));
   callform->show();
 }
@@ -426,6 +426,7 @@ void MainWindow::updateButtons(int row)
 void MainWindow::quitClicked()
 {
   DBman::closeDB();
+  saveSettings();
   qApp->quit();
 }
 
@@ -434,6 +435,7 @@ void MainWindow::quitClicked()
 void MainWindow::shutdownClicked()
 {
   DBman::closeDB();
+  saveSettings();
   qApp->quit();
 }
 
@@ -448,15 +450,15 @@ void MainWindow::createView()
   CallIdx = model->fieldIndex("Call");
   NameIdx = model->fieldIndex("Name");
 
-  model->setHeaderData(CallIdx, Qt::Horizontal, tr("Call Sign"));
-  model->setHeaderData(NameIdx, Qt::Horizontal, tr("Name"));
-  model->setHeaderData(model->fieldIndex("Freq"),Qt::Horizontal, tr("CH/Freq"));
-  model->setHeaderData(model->fieldIndex("City"), Qt::Horizontal, tr("City"));
-  model->setHeaderData(model->fieldIndex("County"),Qt::Horizontal, tr("County"));
-  model->setHeaderData(model->fieldIndex("Remarks"),Qt::Horizontal, tr("Remarks"));
+  model->setHeaderData(CallIdx, Qt::Horizontal,"Call Sign");
+  model->setHeaderData(NameIdx, Qt::Horizontal,"Name");
+  model->setHeaderData(model->fieldIndex("Freq"),Qt::Horizontal,"CH/Freq");
+  model->setHeaderData(model->fieldIndex("City"), Qt::Horizontal,"City");
+  model->setHeaderData(model->fieldIndex("County"),Qt::Horizontal,"County");
+  model->setHeaderData(model->fieldIndex("Remarks"),Qt::Horizontal,"Remarks");
 
 
-// Populate the model:
+  // Populate the model:
   if (!model->select())
   {
     showError(model->lastError());
@@ -477,8 +479,6 @@ void MainWindow::createView()
   connect(previousButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toPrevious);
   connect(nextButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toNext);
   connect(mapper, &QDataWidgetMapper::currentIndexChanged, this,&MainWindow::updateButtons);
-
-//  mapper->addMapping(typeComboBox, typeIndex);
 
   connect(ui->DBTable->selectionModel(),&QItemSelectionModel::currentRowChanged,
             mapper,&QDataWidgetMapper::setCurrentModelIndex);
@@ -505,6 +505,60 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
     default:
       QWidget::keyPressEvent(event);  //let others handle this
   }
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::optionChanged()
+{
+  saveSettings();
+  loadSettings(); // to resize the window
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::saveSettings()
+{
+  QSettings settings("HamstersDB", "settings");
+  settings.beginGroup("MainWindow");
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.endGroup();
+  if(last_db.length() >1)
+  {
+    settings.setValue("last_openedDB",last_db);
+  }
+  else
+  {
+    settings.setValue("last_openedDB",qApp->applicationDirPath()+"/HAMS.db");
+  }
+
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::loadSettings()
+{
+  //default center of screen
+int x,y;
+#if QT_VERSION < 0x060000
+  QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog mapped without ...
+  QRect desktopRect = QApplication::desktop()->availableGeometry(this);
+  QPoint center = desktopRect.center();
+  x=center.x() - width() * 0.5;
+  y=center.y() - height() * 0.5;
+#else
+  QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog warning
+  QScreen *screen = QGuiApplication::primaryScreen();
+  QRect  screenGeometry = screen->geometry();
+  x=screenGeometry.height()/2 -225;
+  y=screenGeometry.width()/2 -400;
+#endif
+
+  QSettings settings("HamstersDB", "settings");
+  settings.beginGroup("MainWindow");
+  resize(settings.value("size", QSize(840,450)).toSize());
+  move(settings.value("pos", QPoint(x,y)).toPoint());
+  settings.endGroup();
+  QString default_DB=qApp->applicationDirPath()+"/HAMS.db";
+  last_db=settings.value("last_openedDB",default_DB).toString();
 }
 
 //--------------------------------------------------------------------------------------

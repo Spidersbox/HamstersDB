@@ -7,13 +7,11 @@
 class DBman;
 
 
-class DBman//: public QObject
+class DBman
 {
-//  Q_OBJECT
 
 public:
   DBman (QObject *_parent);
-//  explicit DBman(QObject *parent = 0);
   ~DBman();
 static void closeDB();
 static QSqlError insert();
@@ -31,14 +29,8 @@ static void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const 
 
 static constexpr auto Insert_HAMS = QLatin1String(R"(insert into hams(Call,Freq,Name,City,County,Remarks) values(?, ?, ?, ?, ?,?))");
 
-//static constexpr auto Select_HAMS = QLatin1String(R"(select * from hams where Name like '%?%')");
 
 private:
-
-
-
-//  void SetSignals();
-
 
 
 private slots:
