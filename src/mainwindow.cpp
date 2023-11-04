@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QtGlobal> // for checking qt version
 #include <QSqlTableModel>
 #include <QMenuBar>
 #include <QIcon>

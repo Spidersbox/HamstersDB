@@ -34,8 +34,8 @@ QSqlError DBman::initDB(QString dbName)
   if(!query.prepare(Insert_HAMS))
     return query.lastError();
 
-  addRec(query, "KK7LKQ","145.19","Walt","Republic","Ferry","usa"," it's me :)");
-  addRec(query, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","wa usa","");
+  addRec(query, "KK7LKQ","145.19","Walt","Republic","Ferry","Washington USA"," it's me :)");
+  addRec(query, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","USA","");
 
   return QSqlError();
 }
