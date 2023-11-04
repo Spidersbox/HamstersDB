@@ -146,6 +146,13 @@ void MainWindow::on_RemarksEdit_textEdited()
 }
 
 //-----------------------------------------------------------------------------------------
+//void MainWindow::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+void MainWindow::onDataChanged()
+{
+  setChanges();
+}
+
+//-----------------------------------------------------------------------------------------
 void MainWindow::setChanges()
 {
   updateButton->setEnabled(true);
@@ -191,17 +198,17 @@ void MainWindow::createToolBars()
   deleteButton->setEnabled(true);
 
   nextButton = new QPushButton(this);
-  nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}" ":disabled{background-color:#a9a9a9;}");
+  nextButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_next); width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_next_hover);}" ":disabled{background-color:#dad4d4;}");
   nextButton->setToolTip("go to next record");
   nextButton->setEnabled(true);
 
   previousButton = new QPushButton(this);
-  previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}" ":disabled{background-color:#a9a9a9;}");
+  previousButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_previous);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_previous_hover);}" ":disabled{background-color:#dad4d4;}");
   previousButton->setToolTip("go to previous record");
   previousButton->setEnabled(true);
 
   updateButton = new QPushButton(this);
-  updateButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_update);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_update_hover);}" ":disabled{background-color:#a9a9a9;}");
+  updateButton->setStyleSheet("QPushButton{border-image:url(:/images/bt_update);width:32px; height:32px;}" ":hover{ border-image: url(:/images/bt_update_hover);}" ":disabled{background-color:#dad4d4;}");
   updateButton->setToolTip("save changes to disk");
   updateButton->setEnabled(false);
 
@@ -498,8 +505,14 @@ void MainWindow::createView()
   connect(nextButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toNext);
   connect(mapper, &QDataWidgetMapper::currentIndexChanged, this,&MainWindow::updateButtons);
 
+
   connect(ui->DBTable->selectionModel(),&QItemSelectionModel::currentRowChanged,
             mapper,&QDataWidgetMapper::setCurrentModelIndex);
+
+//  connect(ui->DBTable->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+  connect(ui->DBTable->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onDataChanged()));
+     
+
   ui->DBTable->setCurrentIndex(model->index(0, 0));
   ui->DBTable->selectRow(0);
 

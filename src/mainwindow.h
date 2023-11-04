@@ -96,6 +96,8 @@ private slots:
   void on_CountyEdit_textEdited();
   void on_CountryEdit_textEdited();
   void on_RemarksEdit_textEdited();
+//  void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void onDataChanged();
   void setChanges();
 
   /** for retrieving data from editforms to mainform */
