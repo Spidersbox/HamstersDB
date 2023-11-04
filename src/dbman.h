@@ -22,12 +22,12 @@ static QStringList Select_Call(QString name);
 
 static QSqlError removeRow(QSqlRelationalTableModel *tempmodel,int row, int count);
 
-static constexpr auto Create_HAMS_Table = QLatin1String(R"(create table hams(id integer primary key, Call varchar,  Freq varchar,Name varchar, City varchar,County varchar,Remarks varchar))");
+static constexpr auto Create_HAMS_Table = QLatin1String(R"(create table hams(id integer primary key, Call varchar,  Freq varchar,Name varchar, City varchar,County varchar,Country varchar,Remarks varchar))");
 
 static void addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
-            const QString &city,const QString &county,const QString &remarks);
+            const QString &city,const QString &county,const QString &country,const QString &remarks);
 
-static constexpr auto Insert_HAMS = QLatin1String(R"(insert into hams(Call,Freq,Name,City,County,Remarks) values(?, ?, ?, ?, ?,?))");
+static constexpr auto Insert_HAMS = QLatin1String(R"(insert into hams(Call,Freq,Name,City,County,Country,Remarks) values(?, ?, ?, ?, ?,?,?))");
 
 
 private:

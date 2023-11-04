@@ -71,12 +71,20 @@ MainWindow::MainWindow(QWidget *parent)
 
   // menubar on form instead
   menuBar()->setNativeMenuBar(false);
+
   if(last_db.length() >1)
   {
-    DBman::open(last_db);
-    clean_title="Hamsters DB "+last_db;
-    setWindowTitle(clean_title);
-    createView();
+    if(QFileInfo::exists(last_db))
+    {
+      DBman::open(last_db);
+      clean_title="Hamsters DB "+last_db;
+      setWindowTitle(clean_title);
+      createView();
+    }
+    else
+    {
+      createClicked();
+    }
   }
 
 }
@@ -121,6 +129,12 @@ void MainWindow::on_CityEdit_textEdited()
 
 //--------------------------------------------------------------------------------------
 void MainWindow::on_CountyEdit_textEdited()
+{
+  setChanges();
+}
+
+//--------------------------------------------------------------------------------------
+void MainWindow::on_CountryEdit_textEdited()
 {
   setChanges();
 }
@@ -191,7 +205,7 @@ void MainWindow::createToolBars()
   updateButton->setToolTip("save changes to disk");
   updateButton->setEnabled(false);
 
-  horizontalGroupBox = new QGroupBox;
+  widget = new QWidget;
   QHBoxLayout *navLayout = new QHBoxLayout;
 
   navLayout->addWidget(newButton);
@@ -201,8 +215,10 @@ void MainWindow::createToolBars()
   navLayout->addWidget(updateButton);
   navLayout->setContentsMargins(0,0,0,0);
 
-  horizontalGroupBox->setLayout(navLayout);
-  ui->verticalLayout->addWidget(horizontalGroupBox,0, Qt::AlignCenter);
+  widget->setLayout(navLayout);
+  widget->setContentsMargins(0,0,0,0);
+  ui->verticalLayout->addWidget(widget,0, Qt::AlignCenter);
+  ui->verticalLayout->setContentsMargins(0,0,0,0);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -455,6 +471,7 @@ void MainWindow::createView()
   model->setHeaderData(model->fieldIndex("Freq"),Qt::Horizontal,"CH/Freq");
   model->setHeaderData(model->fieldIndex("City"), Qt::Horizontal,"City");
   model->setHeaderData(model->fieldIndex("County"),Qt::Horizontal,"County");
+  model->setHeaderData(model->fieldIndex("Country"),Qt::Horizontal,"Country");
   model->setHeaderData(model->fieldIndex("Remarks"),Qt::Horizontal,"Remarks");
 
 
@@ -474,6 +491,7 @@ void MainWindow::createView()
   mapper->addMapping(ui->NameEdit, model->fieldIndex("Name"));
   mapper->addMapping(ui->CityEdit, model->fieldIndex("City"));
   mapper->addMapping(ui->CountyEdit, model->fieldIndex("County"));
+  mapper->addMapping(ui->CountryEdit, model->fieldIndex("Country"));
   mapper->addMapping(ui->RemarksEdit, model->fieldIndex("Remarks"));
 
   connect(previousButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toPrevious);
@@ -486,12 +504,13 @@ void MainWindow::createView()
   ui->DBTable->selectRow(0);
 
   ui->DBTable->setColumnWidth(0,0);//id
-  ui->DBTable->setColumnWidth(1,80);//call sign
-  ui->DBTable->setColumnWidth(2,80);//ch/freq
+  ui->DBTable->setColumnWidth(1,70);//call sign
+  ui->DBTable->setColumnWidth(2,70);//ch/freq
   ui->DBTable->setColumnWidth(3,100);//name
   ui->DBTable->setColumnWidth(4,100);//city
   ui->DBTable->setColumnWidth(5,100);//county
-  ui->DBTable->setColumnWidth(6,550);//remarks
+  ui->DBTable->setColumnWidth(6,100);//country
+  ui->DBTable->setColumnWidth(7,550);//remarks
 }
 
 //--------------------------------------------------------------------------------------

@@ -34,8 +34,8 @@ QSqlError DBman::initDB(QString dbName)
   if(!query.prepare(Insert_HAMS))
     return query.lastError();
 
-  addRec(query, "KK7LKQ","145.19","Walt","Republic","Ferry"," it's me :)");
-  addRec(query, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","");
+  addRec(query, "KK7LKQ","145.19","Walt","Republic","Ferry","usa"," it's me :)");
+  addRec(query, "WA7EC","145.19","Sam Jenkins","Republic","Ferry","wa usa","");
 
   return QSqlError();
 }
@@ -49,7 +49,7 @@ QSqlError DBman::insert()
     if (!rec.prepare(Insert_HAMS))
       return rec.lastError();
 
-    addRec(rec, "","","","","","");
+    addRec(rec, "","","","","","","");
   }
   return rec.lastError();
 }
@@ -88,13 +88,15 @@ if (db.isOpen())
 
 //-----------------------------------------------------------------------------------------
 void DBman::addRec(QSqlQuery &rec,const QString &call,const QString &freq,const QString &name,
-            const QString &city,const QString &county,const QString &remarks)
+            const QString &city,const QString &county,const QString &country,const QString &remarks)
 {
+
   rec.addBindValue(call);
   rec.addBindValue(freq);
   rec.addBindValue(name);
   rec.addBindValue(city);
   rec.addBindValue(county);
+  rec.addBindValue(country);
   rec.addBindValue(remarks);
   rec.exec();
 }

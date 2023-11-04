@@ -40,7 +40,7 @@ private:
   SearchForm *searchform=new SearchForm();
 
   virtual void  keyPressEvent(QKeyEvent *event);
-  QGroupBox *horizontalGroupBox;
+  QWidget *widget;
   int CallIdx = 0;
   int NameIdx = 0;
   QDataWidgetMapper *mapper;
@@ -94,6 +94,7 @@ private slots:
   void on_FreqEdit_textEdited();
   void on_CityEdit_textEdited();
   void on_CountyEdit_textEdited();
+  void on_CountryEdit_textEdited();
   void on_RemarksEdit_textEdited();
   void setChanges();
 
