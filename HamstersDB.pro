@@ -6,11 +6,11 @@ QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+#CONFIG += console # for console output (debugging)
 
 # add no pie so you can click on your app to run in linux
-QMAKE_LFLAGS += -no-pie
+!windows:QMAKE_LFLAGS += -no-pie
 
-#LIBS += -Wl,-Bstatic
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -26,14 +26,17 @@ SOURCES += src/main.cpp\
     src/pickerform.cpp \
     src/searchform.cpp \
     src/callform.cpp \
-    src/nameform.cpp
+    src/nameform.cpp \
+    src/version.cpp
 
 HEADERS  += src/mainwindow.h \
     src/dbman.h \
     src/pickerform.h \
     src/searchform.h \
     src/callform.h \
-    src/nameform.h
+    src/nameform.h \
+    src/version.h \
+    src/clientversion.h
 
 FORMS    += src/forms/mainwindow.ui \
     src/forms/PickerForm.ui \
@@ -44,6 +47,7 @@ FORMS    += src/forms/mainwindow.ui \
 RESOURCES += src/hamstersdb.qrc
 windows:RC_FILE = src/hamstersdb.rc
 
+windows:LIBS += -Wl,-Bstatic
 windows:LIBS += -static-libgcc 
 
 # Default rules for deployment.
