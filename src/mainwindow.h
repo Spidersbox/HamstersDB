@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow(QWidget *parent = 0);
-  void closeEvent(QCloseEvent *close_trigger);
+  void closeEvent(QCloseEvent *event);
   QSqlRelationalTableModel *model = nullptr;
   QString last_db;
   QString clean_title;

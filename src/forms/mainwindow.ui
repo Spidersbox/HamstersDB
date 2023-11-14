@@ -70,7 +70,7 @@
             <property name="minimumSize">
              <size>
               <width>600</width>
-              <height>200</height>
+              <height>220</height>
              </size>
             </property>
             <widget class="QLabel" name="label_2">
@@ -319,6 +319,32 @@
              </property>
              <property name="text">
               <string>  County</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="DBname_Label">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>200</y>
+               <width>471</width>
+               <height>17</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>DBname</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="DBchanges_Label">
+             <property name="geometry">
+              <rect>
+               <x>510</x>
+               <y>200</y>
+               <width>67</width>
+               <height>17</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>changed</string>
              </property>
             </widget>
            </widget>

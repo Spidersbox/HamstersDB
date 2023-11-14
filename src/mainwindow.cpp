@@ -30,7 +30,7 @@
 #include "searchform.h"
 #include "callform.h"
 #include "nameform.h"
-
+#include "version.h"
 #include "ui_mainwindow.h"
 
 class DBman;
@@ -77,7 +77,8 @@ MainWindow::MainWindow(QWidget *parent)
     if(QFileInfo::exists(last_db))
     {
       DBman::open(last_db);
-      clean_title="Hamsters DB "+last_db;
+      clean_title="Hamsters DB "+CLIENT_BUILD;
+      ui->DBname_Label->setText(last_db);
       setWindowTitle(clean_title);
       createView();
     }
@@ -90,9 +91,8 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 //--------------------------------------------------------------------------------------
-void MainWindow::closeEvent(QCloseEvent *close_trigger)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
-  close_trigger=close_trigger; //make unused param warning go away
   shutdownClicked();
 }
 
@@ -157,6 +157,7 @@ void MainWindow::setChanges()
 {
   updateButton->setEnabled(true);
   setWindowTitle(clean_title+" not saved");
+  ui->DBchanges_Label->setText("not saved");
 }
 
 //-----------------------------------------------------------------------------------------
@@ -265,12 +266,26 @@ void MainWindow::createActions()
 // Show open file dialog
 void MainWindow::openClicked()
 {
-  QString filename=QFileDialog::getOpenFileName(this,"Open database",qApp->applicationDirPath(),
-                                                "SQL DB files (*.db);;(*.sql)");
-  last_db=filename;
+  if (isOpen())
+  {
+    saveChanges();
+    DBman::closeDB();
+  }
+
+  QString filename=QFileDialog::getOpenFileName(this,"Open database",
+                   qApp->applicationDirPath(), "SQL DB files (*.db);;(*.sql)");
   DBman::open(filename);
-  clean_title="Hamsters DB "+filename;
-  setWindowTitle(clean_title);
+  if (!isOpen())
+  {
+    QMessageBox::warning(this,"HamstersDB",
+                          "The database reported an error: "+model->lastError().text());
+    return;
+  }
+  last_db=filename;
+//  clean_title=filename;
+//  setWindowTitle(clean_title);
+  ui->DBchanges_Label->setText("");
+  ui->DBname_Label->setText(filename);
   createView();
 }
 
@@ -283,6 +298,11 @@ void MainWindow::createClicked()
   // check to see if default db exists
   if(!QFileInfo::exists(default_path))
   {
+  if (isOpen())
+  {
+    saveChanges();
+    DBman::closeDB();
+  }
     // default db does not exist - create it
     QSqlError err = DBman::initDB(default_path);
     if (err.type() != QSqlError::NoError)
@@ -290,8 +310,9 @@ void MainWindow::createClicked()
       showError(err);
       return;
     }
-    clean_title="Hamsters DB "+default_path;
-    setWindowTitle(clean_title);
+    clean_title=default_path;
+//    setWindowTitle(clean_title);
+    ui->DBname_Label->setText(clean_title);
     createView();
   }
   else
@@ -308,13 +329,21 @@ void MainWindow::createClicked()
     // check if file exists
     if(!QFileInfo::exists(filename))
     {
-      // default db does not exist - create it
+  if (isOpen())
+  {
+    saveChanges();
+    DBman::closeDB();
+  }
+      // db does not exist - create it
       QSqlError err = DBman::initDB(filename);
       if (err.type() != QSqlError::NoError)
       {
         showError(err);
         return;
       }
+      clean_title=filename;
+//      setWindowTitle(clean_title);
+      ui->DBname_Label->setText(clean_title);
       createView();
     }
   }
@@ -374,6 +403,7 @@ void MainWindow::saveChanges()
   {
     model->database().commit();
     setWindowTitle(clean_title);
+    ui->DBchanges_Label->setText("");
   }
   else
   {
@@ -448,8 +478,8 @@ void MainWindow::updateButtons(int row)
 // exit this app
 void MainWindow::quitClicked()
 {
-  DBman::closeDB();
   saveSettings();
+  DBman::closeDB();
   qApp->quit();
 }
 
@@ -457,8 +487,8 @@ void MainWindow::quitClicked()
 // exit this app
 void MainWindow::shutdownClicked()
 {
-  DBman::closeDB();
   saveSettings();
+  DBman::closeDB();
   qApp->quit();
 }
 

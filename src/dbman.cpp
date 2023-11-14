@@ -41,6 +41,15 @@ QSqlError DBman::initDB(QString dbName)
 }
 
 //-----------------------------------------------------------------------------------------
+bool isOpen()
+{
+  if(db.isOpen())
+    return true;
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------------------
 QSqlError DBman::insert()
 {
   QSqlQuery rec;

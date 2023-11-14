@@ -6,6 +6,7 @@
 
 class DBman;
 
+bool isOpen();
 
 class DBman
 {
@@ -13,6 +14,7 @@ class DBman
 public:
   DBman (QObject *_parent);
   ~DBman();
+static bool isOpen();
 static void closeDB();
 static QSqlError insert();
 static QSqlError initDB(QString dbName);
