@@ -5,7 +5,7 @@ QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++14
 CONFIG += console # for console output (debugging)
 
 # add no pie so you can click on your app to run in linux
