@@ -601,7 +601,9 @@ void MainWindow::loadSettings()
   //default center of screen
 int x,y;
 #if QT_VERSION < 0x060000
-  QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog mapped without ...
+  #if QT_VERSION < 0x050500
+    QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);//remove GtkDialog mapped without ...
+  #endif
   QRect desktopRect = QApplication::desktop()->availableGeometry(this);
   QPoint center = desktopRect.center();
   x=center.x() - width() * 0.5;
