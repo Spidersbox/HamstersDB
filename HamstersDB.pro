@@ -1,5 +1,6 @@
 TARGET = HamstersDB
-RC_ICONS = images/favicon.ico
+RC_ICONS = src/images/favicon.ico
+ICON = src/images/icons.icns
 QT += core gui
 QT += sql
 

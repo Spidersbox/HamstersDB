@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
 
    
 #ifndef Q_OS_MAC
-    qApp->setWindowIcon(QIcon(":/images/favicon"));
-    setWindowIcon(QIcon(":/images/favicon"));
+    qApp->setWindowIcon(QIcon(":/images/icons));
+    setWindowIcon(QIcon(":/images/icons"));
 #else
     setUnifiedTitleAndToolBarOnMac(true);
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
