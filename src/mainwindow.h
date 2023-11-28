@@ -82,7 +82,7 @@ private:
   void loadSettings();
   void saveSettings();
   void optionChanged();
-
+  QString getDBpath();
   void saveChanges();
   void createView();
   void showError(const QSqlError &err);

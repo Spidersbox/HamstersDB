@@ -293,7 +293,9 @@ void MainWindow::openClicked()
 // menu-create new db
 void MainWindow::createClicked()
 {
-  QString default_path=qApp->applicationDirPath()+"/HAMS.db";
+//  QString default_path=qApp->applicationDirPath()+"/HAMS.db";
+  QString default_path=getDBpath()+"/HAMS.db";
+//QMessageBox::warning(this, "create new db",default_path);
 
   // check to see if default db exists
   if(!QFileInfo::exists(default_path))
@@ -318,7 +320,7 @@ void MainWindow::createClicked()
   else
   {
     QString filename=QFileDialog::getSaveFileName(
-              this,"Create database",qApp->applicationDirPath(),
+              this,"Create database",getDBpath(),
               "SQL DB files (*.db)");
 
     QFileInfo Finfo(filename);
@@ -590,7 +592,9 @@ void MainWindow::saveSettings()
   }
   else
   {
-    settings.setValue("last_openedDB",qApp->applicationDirPath()+"/HAMS.db");
+    QString default_DB=getDBpath();
+//    settings.setValue("last_openedDB",qApp->applicationDirPath()+"/HAMS.db");
+    settings.setValue("last_openedDB",default_DB+"/HAMS.db");
   }
 
 }
@@ -621,8 +625,37 @@ int x,y;
   resize(settings.value("size", QSize(840,450)).toSize());
   move(settings.value("pos", QPoint(x,y)).toPoint());
   settings.endGroup();
-  QString default_DB=qApp->applicationDirPath()+"/HAMS.db";
-  last_db=settings.value("last_openedDB",default_DB).toString();
+  QString default_DB=getDBpath();
+  last_db=settings.value("last_openedDB",default_DB+"/HAMS.db").toString();
+//QMessageBox::warning(this, "read settings",default_DB);
+                
+}
+
+//--------------------------------------------------------------------------------------
+// gets the default path to store the database
+QString MainWindow::getDBpath()
+{
+#ifdef Q_OS_WIN32
+  QString appdata=getenv("appdata");
+  return appdata+"/HamstersDB";
+#endif
+
+#ifdef Q_OS_MAC
+  QString s_path=QString("%1").arg(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+//QMessageBox::warning(this, "read settings",s_path);
+  QDir dir(s_path);
+  if(!dir.exists())
+    dir.mkpath(".");
+    
+  return s_path;//+"/Application Support";
+#endif
+
+#ifdef Q_OS_LINUX // may need to add more for other OS's
+  QString appdata=getenv("HOME");
+  return appdata+"/HamstersDB";
+#endif
+
+return "unknown default DB path";
 }
 
 //--------------------------------------------------------------------------------------
