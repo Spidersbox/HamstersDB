@@ -156,6 +156,7 @@ void MainWindow::onDataChanged()
 void MainWindow::setChanges()
 {
   updateButton->setEnabled(true);
+  updateButton->setFocus(); // needed on Mac to save line edit in focus
   setWindowTitle(clean_title+" not saved");
   ui->DBchanges_Label->setText("not saved");
 }
