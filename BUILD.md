@@ -28,10 +28,10 @@ Icon=/home/YOUR_NAME/.local/share/icons/HamstersDB.png
 Terminal=false
 
 *copy the HamstersDB.desktop file to your Desktop
-cp ~/.local/share/applications/HamstersDB.desktop ~/Desktop
+cp ~/.local/share/applications/HamstersDB.desktop ~/Desktop<br>
 
-• Enable launching on Ubuntu 22.04. If you put the .desktop file on your Desktop or in a folder, Ubuntu blocks custom icons until you explicitly trust the file:
-• Right-click the myqtapp.desktop file in the file manager.
-• Select Allow Launching.
-• The file will immediately transform into your custom icon and launch your app when double-clicked.
+• Enable launching on Ubuntu 22.04. If you put the .desktop file on your Desktop or in a folder, Ubuntu blocks custom icons until you explicitly trust the file:<br>
+• Right-click the myqtapp.desktop file in the file manager.<br>
+• Select Allow Launching.<br>
+• The file will immediately transform into your custom icon and launch your app when double-clicked.<br>
 
