@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 
    
 #ifndef Q_OS_MAC
-    qApp->setWindowIcon(QIcon(":/images/icons));
+    qApp->setWindowIcon(QIcon(":/images/icons"));
     setWindowIcon(QIcon(":/images/icons"));
 #else
     setUnifiedTitleAndToolBarOnMac(true);
